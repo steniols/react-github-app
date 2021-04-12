@@ -2,14 +2,14 @@ import React from "react";
 import { Redirect } from "react-router";
 import PageTop from "../../components/page-top/page-top.component";
 import authService from "../../services/auth.service";
-import postsService from "../../services/posts.service";
+import tagsService from "../../services/tags.service";
 import "./tag-edit.page.css";
 
 class PostEditPage extends React.Component {
   constructor(props) {
     super(props);
 
-    // State iniciado com atributos do post vazios
+    // State iniciado com atributos do tag vazios
     this.state = {
       id: null,
       title: "",
@@ -28,24 +28,24 @@ class PostEditPage extends React.Component {
 
     // Verificando se id foi passado nos parâmetros da url
     if (this.props?.match?.params?.id) {
-      let postId = this.props.match.params.id;
-      this.loadPost(postId);
+      let tagId = this.props.match.params.id;
+      this.loadPost(tagId);
     }
   }
 
-  // Função que recupera os dados do post caso seja uma edição
-  async loadPost(postId) {
+  // Função que recupera os dados do tag caso seja uma edição
+  async loadPost(tagId) {
     try {
-      let res = await postsService.getOne(postId);
-      let post = res.data.data[0];
-      this.setState(post);
+      let res = await tagsService.getOne(tagId);
+      let tag = res.data.data[0];
+      this.setState(tag);
     } catch (error) {
       console.log(error);
-      alert("Não foi possível carregar post.");
+      alert("Não foi possível carregar tag.");
     }
   }
 
-  // Função responsável por salvar o post
+  // Função responsável por salvar o tag
   async sendPost() {
     // Reunindo dados
     let data = {
@@ -71,18 +71,18 @@ class PostEditPage extends React.Component {
     try {
       // Caso seja uma edição, chamar o "edit" do serviço
       if (this.state.id) {
-        await postsService.edit(data, this.state.id);
+        await tagsService.edit(data, this.state.id);
         alert("Post editado com sucesso!");
       }
       // Caso seja uma adição, chamar o "create" do serviço
       else {
-        await postsService.create(data);
+        await tagsService.create(data);
         alert("Post criado com sucesso!");
       }
-      this.props.history.push("/post-list");
+      this.props.history.push("/tag-list");
     } catch (error) {
       console.log(error);
-      alert("Erro ao criar post.");
+      alert("Erro ao criar tag.");
     }
   }
 
@@ -93,15 +93,15 @@ class PostEditPage extends React.Component {
 
     let title = this.state.id ? "Editar Post" : "Novo Post";
     let desc = this.state.id
-      ? "Editar informações de um post"
-      : "Formulário de criação de posts";
+      ? "Editar informações de um tag"
+      : "Formulário de criação de tags";
 
     return (
       <div className="container">
         <PageTop title={title} desc={desc}>
           <button
             className="btn btn-light"
-            onClick={() => this.props.history.replace("/post-list")}
+            onClick={() => this.props.history.replace("/tag-list")}
           >
             Cancelar
           </button>

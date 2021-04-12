@@ -1,7 +1,6 @@
-const md5 = require('md5');
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('data.db');
-
+const md5 = require("md5");
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database("data.db");
 
 const USERS_SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
@@ -24,8 +23,8 @@ const INSERT_USER = `
     ) VALUES (?, ?, ?)
 `;
 
-const POSTS_SCHEMA = `
-	CREATE TABLE IF NOT EXISTS posts (
+const TAGS_SCHEMA = `
+	CREATE TABLE IF NOT EXISTS tags (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT,
@@ -33,47 +32,46 @@ const POSTS_SCHEMA = `
 	)
 `;
 
-const DROP_POSTS_SCHEMA = `
-	DROP TABLE IF EXISTS posts;
+const DROP_TAGS_SCHEMA = `
+	DROP TABLE IF EXISTS tags;
 `;
 
 const INSERT_POST = `
-    INSERT OR IGNORE INTO posts (
+    INSERT OR IGNORE INTO tags (
         title,
 		content,
 		imageUrl
     ) VALUES (?, ?, ?)
 `;
 
-
 db.serialize(async () => {
-	db.run('PRAGMA foreign_keys=ON');
-	db.run(DROP_USERS_SCHEMA);
-	db.run(USERS_SCHEMA);
-	db.run(INSERT_USER, ['Admin', 'admin@fiap.com.br', md5('123456')]);
-	db.run(DROP_POSTS_SCHEMA);
-	db.run(POSTS_SCHEMA);
+  db.run("PRAGMA foreign_keys=ON");
+  db.run(DROP_USERS_SCHEMA);
+  db.run(USERS_SCHEMA);
+  db.run(INSERT_USER, ["Admin", "admin@teste.com.br", md5("123456")]);
+  db.run(DROP_TAGS_SCHEMA);
+  db.run(TAGS_SCHEMA);
 
-	try {
-		db.run(INSERT_POST, [
-			"Primeiro Post",
-			"Este é o conteúdo do primeiro post, este texto é o conteúdo.",
-			"https://s2.glbimg.com/fP8FcBdhKXgZ2HCLdGl7R8MIHIk=/e.glbimg.com/og/ed/f/original/2017/10/20/rick-and-morty3.png"
-		]);
-	} catch (e) {
-		console.log(`Error: ${e}`);
-	}
+  try {
+    db.run(INSERT_POST, [
+      "Javascript",
+      "JavaScript é uma linguagem de programação interpretada estruturada, de script em alto nível com tipagem dinâmica fraca e multiparadigma.",
+      "https://arquivo.devmedia.com.br/noticias/artigos/artigo_javascript-reduce-reduzindo-uma-colecao-em-um-unico-objeto_37981.jpg",
+    ]);
+  } catch (e) {
+    console.log(`Error: ${e}`);
+  }
 
-	db.each('SELECT * FROM posts', (err, contact) => {
-		console.log(`Posts: ${JSON.stringify(contact)}`);
-	});
+  db.each("SELECT * FROM tags", (err, contact) => {
+    console.log(`Tags: ${JSON.stringify(contact)}`);
+  });
 });
 
-process.on('SIGINT', () =>
-	db.close(() => {
-		console.log('DB closed');
-		process.exit(0);
-	})
+process.on("SIGINT", () =>
+  db.close(() => {
+    console.log("DB closed");
+    process.exit(0);
+  })
 );
 
 module.exports = db;

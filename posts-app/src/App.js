@@ -55,8 +55,8 @@ class App extends React.Component {
               <Link to="/" className="nav-item nav-link">
                 Home
               </Link>
-              <Link to="/post-list" className="nav-item nav-link">
-                Posts
+              <Link to="/tag-list" className="nav-item nav-link">
+                Tags
               </Link>
             </div>
             {this.state.userData ? (
@@ -82,14 +82,10 @@ class App extends React.Component {
             <LoginPage {...props} onLogin={() => this.loadUserData()} />
           )}
         />
-        <Route path="/post-list" exact={true} component={PostListPage} />
-        <Route
-          path="/post-detail/:id"
-          exact={true}
-          component={PostDetailPage}
-        />
-        <Route path="/post-add" exact={true} component={PostEditPage} />
-        <Route path="/post-edit/:id" exact={true} component={PostEditPage} />
+        <Route path="/tag-list" exact={true} component={PostListPage} />
+        <Route path="/tag-detail/:id" exact={true} component={PostDetailPage} />
+        <Route path="/tag-add" exact={true} component={PostEditPage} />
+        <Route path="/tag-edit/:id" exact={true} component={PostEditPage} />
       </BrowserRouter>
     );
   }
