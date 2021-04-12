@@ -1,0 +1,21 @@
+.post-img{
+    width: 100%;
+}
+
+.post-info{
+    margin-bottom: 24px;
+}
+
+.post-info h4{
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 4px;
+}
+  
+.post-info p{
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
