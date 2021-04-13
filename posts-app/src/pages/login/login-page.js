@@ -1,51 +1,38 @@
 import React from "react";
 import authService from "../../services/auth.service";
-import { Link } from "react-router-dom";
-
-class Login extends React.Component {
+import { Link, withRouter } from "react-router-dom";
+import queryString from "query-string";
+class LoginPage extends React.Component {
   constructor(props) {
     super(props);
 
-    // Iniciando o state com os valores dos campos vazios
     this.state = {
-      // email: "",
-      // password: "",
+      redirectTo: null,
+      code: null,
+      name: "",
+      login: "",
     };
   }
 
-  // Função responsável por realizar o login
-  // async sendLogin(event) {
-  //   event.preventDefault();
-
-  //   const data = {
-  //     email: this.state.email,
-  //     password: this.state.password,
-  //   };
-
-  //   if (!data.email || data.email == "") {
-  //     window.alert("E-mail é obrigatório");
-  //     return;
-  //   }
-
-  //   if (!data.password || data.password == "") {
-  //     window.alert("Senha é obrigatória");
-  //     return;
-  //   }
-
-  //   try {
-  //     let res = await authService.sendLogin(data);
-  //     authService.setLoggedUser(res.data.data);
-  //     this.props.onLogin();
-  //     this.props.history.replace("/");
-  //   } catch (error) {
-  //     console.log("error", error);
-  //     window.alert("Não foi possível efetuar o login.");
-  //   }
-  // }
+  componentDidMount() {
+    if (this.props?.location?.search) {
+      const values = queryString.parse(this.props.location.search);
+      this.setState({ code: values.code });
+      authService
+        .loginGithub(values.code)
+        .then((res) => {
+          this.props.onLogin();
+          this.props.history.replace("/");
+        })
+        .then(() => {});
+    } else {
+      console.log("Erro no login!");
+    }
+  }
 
   render() {
-    return <div className="container">Página inicial</div>;
+    return <div className="container"></div>;
   }
 }
 
-export default Login;
+export default LoginPage;

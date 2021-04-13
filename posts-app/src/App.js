@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 
+import LoginPage from "./pages/login/login-page";
 import HomePage from "./pages/home/home-page";
 import PostListPage from "./pages/tag-list/tag-list-page";
 import PostDetailPage from "./pages/tag-detail/tag-detail-page";
@@ -16,6 +17,7 @@ class App extends React.Component {
     this.state = {
       name: "",
       login: "",
+      showElements: false,
     };
   }
 
@@ -23,6 +25,7 @@ class App extends React.Component {
     authService.getGithubUser().then((res) => {
       this.setState({ name: res.name });
       this.setState({ login: res.login });
+      this.setState({ showElements: true });
     });
   }
 
@@ -33,6 +36,13 @@ class App extends React.Component {
 
   redirectGitHubLogin() {
     window.location.href = "http://localhost:8002";
+  }
+
+  loadUserData() {
+    authService.getGithubUser().then((res) => {
+      this.setState({ name: res.name });
+      this.setState({ login: res.login });
+    });
   }
 
   render() {
@@ -77,17 +87,27 @@ class App extends React.Component {
                     Sair
                   </button>
                 </>
-              ) : (
-                <button
-                  className="btn btn-outline-dark"
-                  onClick={(e) => this.redirectGitHubLogin()}
-                >
-                  Login com o GitHub
-                </button>
-              )}
+              ) : null}
+
+              {!this.state.login && this.state.showElements ? (
+                <>
+                  <button
+                    className="btn btn-outline-dark"
+                    onClick={(e) => this.redirectGitHubLogin()}
+                  >
+                    Login com o GitHub
+                  </button>
+                </>
+              ) : null}
             </div>
           </div>
         </nav>
+        <Route
+          path="/login"
+          component={(props) => (
+            <LoginPage {...props} onLogin={() => this.loadUserData()} />
+          )}
+        />
         <Route path="/" exact={true} component={HomePage} />
         <Route path="/tag-list" exact={true} component={PostListPage} />
         <Route path="/tag-detail/:id" exact={true} component={PostDetailPage} />

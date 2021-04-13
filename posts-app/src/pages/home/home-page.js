@@ -13,24 +13,16 @@ class HomePage extends React.Component {
       code: null,
       name: "",
       login: "",
+      showElements: false,
     };
   }
 
   componentDidMount() {
-    if (this.props?.location?.search) {
-      const values = queryString.parse(this.props.location.search);
-      this.setState({ code: values.code });
-      authService.loginGithub(values.code).then((res) => {
-        this.setState({ name: res.user.name });
-        this.setState({ login: res.user.login });
-        this.setState({ redirectTo: "/" });
-      });
-    } else {
-      authService.getGithubUser().then((res) => {
-        this.setState({ name: res.name });
-        this.setState({ login: res.login });
-      });
-    }
+    authService.getGithubUser().then((res) => {
+      this.setState({ name: res.name });
+      this.setState({ login: res.login });
+      this.setState({ showElements: true });
+    });
   }
 
   render() {
@@ -40,7 +32,18 @@ class HomePage extends React.Component {
 
     return (
       <div className="container">
-        <PageTop title="Home" desc=""></PageTop>
+        <PageTop title="Bem vindo" desc=""></PageTop>
+
+        {this.state.login ? (
+          <p>
+            Você esta conectado como: <b>{this.state.login}</b>
+          </p>
+        ) : (
+          <p className={!this.state.showElements ? "d-none" : ""}>
+            Faça login com sua conta do github no canto superior direito para
+            poder adicionar tags em seus repositórios.
+          </p>
+        )}
       </div>
     );
   }
