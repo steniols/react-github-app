@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
 import authService from "../../services/auth.service";
 import tagsService from "../../services/tags.service";
-import "./tag-list.page.css";
 
-class PostListPage extends React.Component {
+class RepositoryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,17 +19,20 @@ class PostListPage extends React.Component {
       .getGithubUser()
       .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
-    this.loadPosts();
+    // let loggedUser = authService.getGithubUser();
+    // console.log(loggedUser);
+    // if (!loggedUser) {
+    //   this.setState({ redirectTo: "/" });
+    // }
   }
-
-  async loadPosts() {
-    try {
-      let res = await tagsService.list();
-      this.setState({ tags: res.data.data });
-    } catch (error) {
-      console.log(error);
-      alert("Não foi possível listar os tags.");
-    }
+  async loadRepos() {
+    // try {
+    //   let res = await tagsService.list();
+    //   this.setState({ tags: res.data.data });
+    // } catch (error) {
+    //   console.log(error);
+    //   alert("Não foi possível listar os tags.");
+    // }
   }
 
   render() {
@@ -40,15 +42,13 @@ class PostListPage extends React.Component {
 
     return (
       <div className="container">
-        <PageTop title={"Posts"} desc={"Listagem dos tags"}>
-          <button
-            className="btn btn-primary"
-            onClick={() => this.props.history.push("/tag-add")}
-          >
-            Adicionar
-          </button>
-        </PageTop>
-        {this.state.tags.map((tag) => (
+        <PageTop
+          title={"Repositórios"}
+          desc={"Listagem dos repositórios"}
+        ></PageTop>
+        <p>To do...</p>
+
+        {/* {this.state.tags.map((tag) => (
           <Link to={"/tag-detail/" + tag.id} key={tag.id}>
             <div className="tag-card">
               <div className="tag-card__img">
@@ -60,10 +60,10 @@ class PostListPage extends React.Component {
               </div>
             </div>
           </Link>
-        ))}
+        ))} */}
       </div>
     );
   }
 }
 
-export default PostListPage;
+export default RepositoryPage;

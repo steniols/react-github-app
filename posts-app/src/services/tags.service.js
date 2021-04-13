@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:8001/api";
+const apiUrl = "http://localhost:8002/api";
 
 const tagsService = {
   async list() {

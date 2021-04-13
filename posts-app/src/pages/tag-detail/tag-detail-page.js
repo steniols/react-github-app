@@ -9,25 +9,20 @@ class PostDetailPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // Atributo para armazenar os dados do tag
       tag: null,
       redirectTo: null,
     };
   }
 
-  // Função que é executada assim que o componente carrega
   componentDidMount() {
-    let loggedUser = authService.getLoggedUser();
-    if (!loggedUser) {
-      this.setState({ redirectTo: "/login" });
-    }
-    // Recuperando os id do tag na url
+    authService
+      .getGithubUser()
+      .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
+
     let tagId = this.props.match.params.id;
-    // Chamando a função que carrega os dados do tag
     this.loadPost(tagId);
   }
 
-  // Função que carrega os dados do tag e salva no state
   async loadPost(tagId) {
     try {
       let res = await tagsService.getOne(tagId);
@@ -38,7 +33,6 @@ class PostDetailPage extends React.Component {
     }
   }
 
-  // Função que exclui o tag, chamada ao clicar no botão "Excluir"
   async deletePost(tagId) {
     if (!window.confirm("Deseja realmente excluir este tag?")) return;
 

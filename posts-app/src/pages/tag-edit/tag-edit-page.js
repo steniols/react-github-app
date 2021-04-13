@@ -9,7 +9,6 @@ class PostEditPage extends React.Component {
   constructor(props) {
     super(props);
 
-    // State iniciado com atributos do tag vazios
     this.state = {
       id: null,
       title: "",
@@ -19,21 +18,17 @@ class PostEditPage extends React.Component {
     };
   }
 
-  // Função executada assim que o componente carrega
   componentDidMount() {
-    let loggedUser = authService.getLoggedUser();
-    if (!loggedUser) {
-      this.setState({ redirectTo: "/login" });
-    }
+    authService
+      .getGithubUser()
+      .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
-    // Verificando se id foi passado nos parâmetros da url
     if (this.props?.match?.params?.id) {
       let tagId = this.props.match.params.id;
       this.loadPost(tagId);
     }
   }
 
-  // Função que recupera os dados do tag caso seja uma edição
   async loadPost(tagId) {
     try {
       let res = await tagsService.getOne(tagId);
@@ -45,16 +40,13 @@ class PostEditPage extends React.Component {
     }
   }
 
-  // Função responsável por salvar o tag
   async sendPost() {
-    // Reunindo dados
     let data = {
       title: this.state.title,
       content: this.state.content,
       imageUrl: this.state.imageUrl,
     };
 
-    // Realizando verificações
     if (!data.title || data.title === "") {
       alert("Título é obrigatório!");
       return;
@@ -69,13 +61,10 @@ class PostEditPage extends React.Component {
     }
 
     try {
-      // Caso seja uma edição, chamar o "edit" do serviço
       if (this.state.id) {
         await tagsService.edit(data, this.state.id);
         alert("Post editado com sucesso!");
-      }
-      // Caso seja uma adição, chamar o "create" do serviço
-      else {
+      } else {
         await tagsService.create(data);
         alert("Post criado com sucesso!");
       }
@@ -119,7 +108,6 @@ class PostEditPage extends React.Component {
               value={this.state.title}
               onChange={(e) => this.setState({ title: e.target.value })}
             />
-            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
           </div>
           <div className="form-group">
             <label htmlFor="content">Conteúdo</label>
@@ -132,7 +120,6 @@ class PostEditPage extends React.Component {
               style={{ resize: "none" }}
               onChange={(e) => this.setState({ content: e.target.value })}
             />
-            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
           </div>
           <div className="form-group">
             <label htmlFor="batata">Url da imagem</label>
@@ -143,7 +130,6 @@ class PostEditPage extends React.Component {
               value={this.state.imageUrl}
               onChange={(e) => this.setState({ imageUrl: e.target.value })}
             />
-            {/* <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small> */}
           </div>
         </form>
       </div>

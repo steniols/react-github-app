@@ -3,9 +3,9 @@ const md5 = require("md5");
 const axios = require("axios");
 
 module.exports = (app) => {
-  //   app.get("/", (req, res) => {
-  //     res.json({ message: "Hello api!" });
-  //   });
+  // app.get("/", (req, res) => {
+  //   res.json({ message: "Hello api!" });
+  // });
 
   app.get("/", (req, res) => {
     const clientId = "b04eb0c348dd9a0c2caa";
@@ -13,6 +13,55 @@ module.exports = (app) => {
     res.redirect(
       `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`
     );
+  });
+
+  app.get("/api/github-auth/:code", (req, res) => {
+    const code = req.params.code;
+    console.log(code);
+    const clientId = "b04eb0c348dd9a0c2caa";
+    const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
+    const body = {
+      client_id: clientId,
+      client_secret: clientSecret,
+      code: code,
+    };
+
+    const opts = { headers: { accept: "application/json" } };
+    axios
+      .post(`https://github.com/login/oauth/access_token`, body, opts)
+      .then((res) => res.data.access_token)
+      .then((_token) => {
+        const token = _token;
+        res.json({ token: _token });
+      })
+      .catch((err) => res.status(500).json({ message: err.message }));
+  });
+
+  app.get("/api/github-userdata/:token", (req, res) => {
+    const token = req.params.token;
+    axios
+      .get("https://api.github.com/user", {
+        headers: { authorization: `token ${token}` },
+      })
+      .then((_res) => {
+        res.json({ userdata: _res.data });
+      });
+  });
+
+  app.post("/api/github-repositories", (req, res) => {
+    const token = req.body.token;
+    const user = req.body.user;
+
+    console.log("token", token);
+    console.log("user", user);
+
+    axios
+      .get("https://api.github.com/search/repositories?q=user:" + user, {
+        headers: { authorization: `token ${token}` },
+      })
+      .then((_res) => {
+        res.json({ userdata: _res.data });
+      });
   });
 
   app.get("/oauth-callback", (req, res) => {
@@ -37,21 +86,6 @@ module.exports = (app) => {
         res.json({ ok: 1 });
       })
       .catch((err) => res.status(500).json({ message: err.message }));
-  });
-
-  app.get("/github-userdata", (req, res) => {
-    // Replace 'Thanks' with 'Thank You' in the comment text.
-    const token = "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";
-    // axios
-    //   .get("https://api.github.com/user", {
-    //     headers: { authorization: `token ${token}` },
-    //   })
-    //   .then((res) => console.log(res));
-    axios
-      .get("https://api.github.com/search/repositories?q=user:steniols", {
-        headers: { authorization: `token ${token}` },
-      })
-      .then((res) => console.log(res.data));
   });
 
   app.get("/api/tags/", (req, res) => {
