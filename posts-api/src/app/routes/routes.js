@@ -1,9 +1,56 @@
 const db = require("../../config/database");
 const md5 = require("md5");
+const axios = require("axios");
 
 module.exports = (app) => {
+  //   app.get("/", (req, res) => {
+  //     res.json({ message: "Hello api!" });
+  //   });
+
   app.get("/", (req, res) => {
-    res.json({ message: "Hello api!" });
+    const clientId = "b04eb0c348dd9a0c2caa";
+    const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
+    res.redirect(
+      `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`
+    );
+  });
+
+  app.get("/oauth-callback", (req, res) => {
+    const clientId = "b04eb0c348dd9a0c2caa";
+    const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
+    const body = {
+      client_id: clientId,
+      client_secret: clientSecret,
+      code: req.query.code,
+    };
+
+    const opts = { headers: { accept: "application/json" } };
+    axios
+      .post(`https://github.com/login/oauth/access_token`, body, opts)
+      .then((res) => res.data.access_token)
+      .then((_token) => {
+        console.log("My token:", _token);
+
+        axios
+          .patch("https://api.github.com/user", {
+            headers: { authorization: `token ${_token}` },
+          })
+          .then((res) => console.log(res));
+
+        const token = _token;
+        res.json({ ok: 1 });
+      })
+      .catch((err) => res.status(500).json({ message: err.message }));
+  });
+
+  app.get("/github-userdata", (req, res) => {
+    // Replace 'Thanks' with 'Thank You' in the comment text.
+    const token = "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";
+    axios
+      .patch("https://api.github.com/user", {
+        headers: { authorization: `token ${token}` },
+      })
+      .then((res) => console.log(res));
   });
 
   app.get("/api/tags/", (req, res) => {
