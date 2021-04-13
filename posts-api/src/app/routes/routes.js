@@ -31,11 +31,7 @@ module.exports = (app) => {
       .then((_token) => {
         console.log("My token:", _token);
 
-        axios
-          .patch("https://api.github.com/user", {
-            headers: { authorization: `token ${_token}` },
-          })
-          .then((res) => console.log(res));
+        // Insert token on datatabase or localStorage
 
         const token = _token;
         res.json({ ok: 1 });
@@ -45,12 +41,17 @@ module.exports = (app) => {
 
   app.get("/github-userdata", (req, res) => {
     // Replace 'Thanks' with 'Thank You' in the comment text.
-    const token = "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";
+    const token = "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";
+    // axios
+    //   .get("https://api.github.com/user", {
+    //     headers: { authorization: `token ${token}` },
+    //   })
+    //   .then((res) => console.log(res));
     axios
-      .patch("https://api.github.com/user", {
+      .get("https://api.github.com/search/repositories?q=user:steniols", {
         headers: { authorization: `token ${token}` },
       })
-      .then((res) => console.log(res));
+      .then((res) => console.log(res.data));
   });
 
   app.get("/api/tags/", (req, res) => {
