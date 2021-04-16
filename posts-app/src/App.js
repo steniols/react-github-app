@@ -2,14 +2,13 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 
-import LoginPage from "./pages/login/login-page";
 import HomePage from "./pages/home/home-page";
 import PostListPage from "./pages/tag-list/tag-list-page";
 import PostDetailPage from "./pages/tag-detail/tag-detail-page";
 import PostEditPage from "./pages/tag-edit/tag-edit-page";
 import RepositoryListPage from "./pages/repository-list/repository-list-page";
 
-import authService from "./services/auth.service";
+import githubService from "./services/github.service";
 
 class App extends React.Component {
   constructor(props) {
@@ -22,7 +21,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    authService.getGithubUser().then((res) => {
+    githubService.getUser().then((res) => {
       this.setState({ name: res.name });
       this.setState({ login: res.login });
       this.setState({ showElements: true });
@@ -30,16 +29,16 @@ class App extends React.Component {
   }
 
   logout() {
-    authService.clearLoggedUser();
+    githubService.clearLoggedUser();
     window.location.reload();
   }
 
   redirectGitHubLogin() {
-    window.location.href = "http://localhost:8002";
+    window.location.href = "http://localhost:8003";
   }
 
   loadUserData() {
-    authService.getGithubUser().then((res) => {
+    githubService.getUser().then((res) => {
       this.setState({ name: res.name });
       this.setState({ login: res.login });
     });
@@ -102,12 +101,6 @@ class App extends React.Component {
             </div>
           </div>
         </nav>
-        <Route
-          path="/login"
-          component={(props) => (
-            <LoginPage {...props} onLogin={() => this.loadUserData()} />
-          )}
-        />
         <Route path="/" exact={true} component={HomePage} />
         <Route path="/tag-list" exact={true} component={PostListPage} />
         <Route path="/tag-detail/:id" exact={true} component={PostDetailPage} />

@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
-import authService from "../../services/auth.service";
+import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import "./tag-list.page.css";
 
@@ -16,8 +16,8 @@ class PostListPage extends React.Component {
   }
 
   componentDidMount() {
-    authService
-      .getGithubUser()
+    githubService
+      .getUser()
       .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
     this.loadPosts();

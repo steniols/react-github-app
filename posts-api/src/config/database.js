@@ -2,25 +2,23 @@ const md5 = require("md5");
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("data.db");
 
-const USERS_SCHEMA = `
-CREATE TABLE IF NOT EXISTS users (
+const AUTH_SCHEMA = `
+CREATE TABLE IF NOT EXISTS auth (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    password TEXT NOT NULL
+    field TEXT NOT NULL,
+    value TEXT NOT NULL
 )
 `;
 
-const DROP_USERS_SCHEMA = `
-	DROP TABLE IF EXISTS users;
+const DROP_AUTH_SCHEMA = `
+	DROP TABLE IF EXISTS auth;
 `;
 
-const INSERT_USER = `
-    INSERT OR IGNORE INTO users (
-        name,
-        email,
-        password
-    ) VALUES (?, ?, ?)
+const INSERT_AUTH = `
+    INSERT OR IGNORE INTO auth (
+        field,
+        value
+    ) VALUES (?, ?)
 `;
 
 const TAGS_SCHEMA = `
@@ -36,7 +34,7 @@ const DROP_TAGS_SCHEMA = `
 	DROP TABLE IF EXISTS tags;
 `;
 
-const INSERT_POST = `
+const INSERT_TAG = `
     INSERT OR IGNORE INTO tags (
         title,
 		content,
@@ -46,14 +44,14 @@ const INSERT_POST = `
 
 db.serialize(async () => {
   db.run("PRAGMA foreign_keys=ON");
-  db.run(DROP_USERS_SCHEMA);
-  db.run(USERS_SCHEMA);
-  db.run(INSERT_USER, ["Admin", "admin@teste.com.br", md5("123456")]);
+  db.run(DROP_AUTH_SCHEMA);
+  db.run(AUTH_SCHEMA);
+  db.run(INSERT_AUTH, ["token", ""]);
   db.run(DROP_TAGS_SCHEMA);
   db.run(TAGS_SCHEMA);
 
   try {
-    db.run(INSERT_POST, [
+    db.run(INSERT_TAG, [
       "Javascript",
       "JavaScript é uma linguagem de programação interpretada estruturada, de script em alto nível com tipagem dinâmica fraca e multiparadigma.",
       "https://arquivo.devmedia.com.br/noticias/artigos/artigo_javascript-reduce-reduzindo-uma-colecao-em-um-unico-objeto_37981.jpg",

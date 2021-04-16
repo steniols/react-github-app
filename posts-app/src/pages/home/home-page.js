@@ -1,6 +1,6 @@
 import React from "react";
 import { Redirect } from "react-router";
-import authService from "../../services/auth.service";
+import githubService from "../../services/github.service";
 import queryString from "query-string";
 
 import PageTop from "../../components/page-top/page-top.component";
@@ -18,7 +18,7 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    authService.getGithubUser().then((res) => {
+    githubService.getUser().then((res) => {
       this.setState({ name: res.name });
       this.setState({ login: res.login });
       this.setState({ showElements: true });

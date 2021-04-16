@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
-import authService from "../../services/auth.service";
+import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 
 class RepositoryPage extends React.Component {
@@ -15,11 +15,11 @@ class RepositoryPage extends React.Component {
   }
 
   componentDidMount() {
-    authService
-      .getGithubUser()
+    githubService
+      .getUser()
       .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
-    // let loggedUser = authService.getGithubUser();
+    // let loggedUser = githubService.getUser();
     // console.log(loggedUser);
     // if (!loggedUser) {
     //   this.setState({ redirectTo: "/" });

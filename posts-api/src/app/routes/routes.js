@@ -3,23 +3,19 @@ const md5 = require("md5");
 const axios = require("axios");
 
 module.exports = (app) => {
-  // app.get("/", (req, res) => {
-  //   res.json({ message: "Hello api!" });
-  // });
+  const clientId = "b04eb0c348dd9a0c2caa";
+  const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
 
   app.get("/", (req, res) => {
-    const clientId = "b04eb0c348dd9a0c2caa";
-    const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
     res.redirect(
       `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`
     );
   });
 
-  app.get("/api/github-auth/:code", (req, res) => {
-    const code = req.params.code;
-    console.log(code);
-    const clientId = "b04eb0c348dd9a0c2caa";
-    const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
+  app.get("/api/github-auth-callback", (req, res) => {
+    const code = req.query.code;
+    console.log("returned code", code);
+
     const body = {
       client_id: clientId,
       client_secret: clientSecret,
@@ -30,22 +26,48 @@ module.exports = (app) => {
     axios
       .post(`https://github.com/login/oauth/access_token`, body, opts)
       .then((res) => res.data.access_token)
-      .then((_token) => {
-        const token = _token;
-        res.json({ token: _token });
-      })
-      .catch((err) => res.status(500).json({ message: err.message }));
+      .then((token) => {
+        db.run("UPDATE auth SET value = ? WHERE field = ?", [token, "token"]);
+
+        res.redirect(`http://localhost:3000/`);
+      });
   });
 
-  app.get("/api/github-userdata/:token", (req, res) => {
-    const token = req.params.token;
-    axios
-      .get("https://api.github.com/user", {
-        headers: { authorization: `token ${token}` },
-      })
-      .then((_res) => {
-        res.json({ userdata: _res.data });
-      });
+  app.get("/api/github-get-token", (req, res) => {
+    const sql = "SELECT * FROM auth WHERE id = ? LIMIT 1";
+    const params = 1;
+    db.all(sql, params, (err, row) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+
+      if (row[0].value) {
+        res.json({
+          message: "success",
+          token: row[0].value,
+        });
+      }
+    });
+  });
+
+  app.get("/api/github-get-userdata", (req, res) => {
+    const sql = "SELECT * FROM auth WHERE id = ? LIMIT 1";
+
+    db.all(sql, 1, (err, row) => {
+      const token = row[0].value;
+      axios
+        .get("https://api.github.com/user", {
+          headers: { authorization: `token ${token}` },
+        })
+        .then((_res) => {
+          console.log(_res.data);
+          res.json({ userdata: _res.data });
+        })
+        .catch((error) => {
+          res.json({ error: true, error_details: error });
+        });
+    });
   });
 
   app.post("/api/github-repositories", (req, res) => {
@@ -62,30 +84,6 @@ module.exports = (app) => {
       .then((_res) => {
         res.json({ userdata: _res.data });
       });
-  });
-
-  app.get("/oauth-callback", (req, res) => {
-    const clientId = "b04eb0c348dd9a0c2caa";
-    const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
-    const body = {
-      client_id: clientId,
-      client_secret: clientSecret,
-      code: req.query.code,
-    };
-
-    const opts = { headers: { accept: "application/json" } };
-    axios
-      .post(`https://github.com/login/oauth/access_token`, body, opts)
-      .then((res) => res.data.access_token)
-      .then((_token) => {
-        console.log("My token:", _token);
-
-        // Insert token on datatabase or localStorage
-
-        const token = _token;
-        res.json({ ok: 1 });
-      })
-      .catch((err) => res.status(500).json({ message: err.message }));
   });
 
   app.get("/api/tags/", (req, res) => {
@@ -193,32 +191,6 @@ module.exports = (app) => {
         res.json({ message: "deleted", changes: this.changes });
       }
     );
-  });
-
-  app.post("/api/auth", (req, res) => {
-    const sql = "select * from users where email = ?";
-    const params = [req.body.email];
-    db.all(sql, params, (err, row) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      if (!row || !row[0]) {
-        res.status(404).json({ error: "User not found." });
-        return;
-      }
-      if (row[0].password != md5(req.body.password)) {
-        res.status(400).json({ error: "Wrong login data." });
-        return;
-      }
-      res.json({
-        message: "success",
-        data: {
-          email: row[0].email,
-          name: row[0].name,
-        },
-      });
-    });
   });
 
   app.get((request, response) => {

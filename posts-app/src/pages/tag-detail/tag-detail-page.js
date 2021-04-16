@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import PageTop from "../../components/page-top/page-top.component";
-import authService from "../../services/auth.service";
+import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import "./tag-detail.page.css";
 
@@ -15,8 +15,8 @@ class PostDetailPage extends React.Component {
   }
 
   componentDidMount() {
-    authService
-      .getGithubUser()
+    githubService
+      .getUser()
       .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
     let tagId = this.props.match.params.id;
