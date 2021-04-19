@@ -9,6 +9,7 @@ import PostEditPage from "./pages/tag-edit/tag-edit-page";
 import RepositoryListPage from "./pages/repository-list/repository-list-page";
 
 import githubService from "./services/github.service";
+import queryString from "query-string";
 
 class App extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class App extends React.Component {
 
   logout() {
     githubService.clearLoggedUser();
-    window.location.reload();
+    window.location.href = "http://localhost:3000";
   }
 
   redirectGitHubLogin() {

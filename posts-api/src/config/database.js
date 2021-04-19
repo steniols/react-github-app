@@ -5,8 +5,8 @@ const db = new sqlite3.Database("data.db");
 const AUTH_SCHEMA = `
 CREATE TABLE IF NOT EXISTS auth (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    field TEXT NOT NULL,
-    value TEXT NOT NULL
+    username TEXT NOT NULL,
+    token TEXT NOT NULL
 )
 `;
 
@@ -14,12 +14,12 @@ const DROP_AUTH_SCHEMA = `
 	DROP TABLE IF EXISTS auth;
 `;
 
-const INSERT_AUTH = `
-    INSERT OR IGNORE INTO auth (
-        field,
-        value
-    ) VALUES (?, ?)
-`;
+// const INSERT_AUTH = `
+//     INSERT OR IGNORE INTO auth (
+//         field,
+//         value
+//     ) VALUES (?, ?)
+// `;
 
 const TAGS_SCHEMA = `
 	CREATE TABLE IF NOT EXISTS tags (
@@ -46,7 +46,7 @@ db.serialize(async () => {
   db.run("PRAGMA foreign_keys=ON");
   db.run(DROP_AUTH_SCHEMA);
   db.run(AUTH_SCHEMA);
-  db.run(INSERT_AUTH, ["token", ""]);
+  // db.run(INSERT_AUTH, ["token", ""]);
   db.run(DROP_TAGS_SCHEMA);
   db.run(TAGS_SCHEMA);
 

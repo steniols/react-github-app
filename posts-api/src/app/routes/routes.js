@@ -2,6 +2,14 @@ const db = require("../../config/database");
 const md5 = require("md5");
 const axios = require("axios");
 
+async function getUser(token) {
+  const response = await axios.get("https://api.github.com/user", {
+    headers: { authorization: `token ${token}` },
+  });
+
+  return await response.data;
+}
+
 module.exports = (app) => {
   const clientId = "b04eb0c348dd9a0c2caa";
   const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
@@ -14,8 +22,6 @@ module.exports = (app) => {
 
   app.get("/api/github-auth-callback", (req, res) => {
     const code = req.query.code;
-    console.log("returned code", code);
-
     const body = {
       client_id: clientId,
       client_secret: clientSecret,
@@ -27,41 +33,55 @@ module.exports = (app) => {
       .post(`https://github.com/login/oauth/access_token`, body, opts)
       .then((res) => res.data.access_token)
       .then((token) => {
-        db.run("UPDATE auth SET value = ? WHERE field = ?", [token, "token"]);
+        (async () => {
+          const userdata = await getUser(token);
 
-        res.redirect(`http://localhost:3000/`);
+          db.run("INSERT OR IGNORE INTO auth (token, username) VALUES (?, ?)", [
+            token,
+            userdata.login,
+          ]);
+
+          res.redirect(
+            `http://localhost:3000/?username=${userdata.login}&token=${token}`
+          );
+        })();
       });
   });
 
-  app.get("/api/github-get-token", (req, res) => {
-    const sql = "SELECT * FROM auth WHERE id = ? LIMIT 1";
-    const params = 1;
-    db.all(sql, params, (err, row) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
+  app.post("/api/github-logout-user", (req, res) => {
+    var errors = [];
+    if (!req.body.token) {
+      errors.push("Token não informado");
+    }
+    if (!req.body.username) {
+      errors.push("Username não informado");
+    }
+    if (errors.length) {
+      res.status(400).json({ error: errors.join(",") });
+      return;
+    }
 
-      if (row[0].value) {
-        res.json({
-          message: "success",
-          token: row[0].value,
-        });
-      }
-    });
+    const token = req.body.token;
+    const username = req.body.username;
+
+    db.run("DELETE FROM auth WHERE token = ? AND username = ?", [
+      token,
+      username,
+    ]);
   });
 
-  app.get("/api/github-get-userdata", (req, res) => {
-    const sql = "SELECT * FROM auth WHERE id = ? LIMIT 1";
-
-    db.all(sql, 1, (err, row) => {
-      const token = row[0].value;
+  app.get("/api/github-get-userdata/:token", (req, res) => {
+    const sql = "SELECT * FROM auth WHERE token = ?";
+    db.get(sql, req.params.token, (err, row) => {
+      if (err) {
+        throw err;
+      }
+      const token = row.token;
       axios
         .get("https://api.github.com/user", {
           headers: { authorization: `token ${token}` },
         })
         .then((_res) => {
-          console.log(_res.data);
           res.json({ userdata: _res.data });
         })
         .catch((error) => {

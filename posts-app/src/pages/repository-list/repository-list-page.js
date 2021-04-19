@@ -3,36 +3,33 @@ import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
 import githubService from "../../services/github.service";
-import tagsService from "../../services/tags.service";
 
 class RepositoryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tags: [],
+      repos: [],
       redirectTo: null,
     };
   }
 
   componentDidMount() {
-    githubService
-      .getUser()
-      .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
+    // githubService
+    //   .getUser()
+    //   .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
-    // let loggedUser = githubService.getUser();
-    // console.log(loggedUser);
-    // if (!loggedUser) {
-    //   this.setState({ redirectTo: "/" });
-    // }
+    this.loadRepos();
   }
+
   async loadRepos() {
-    // try {
-    //   let res = await tagsService.list();
-    //   this.setState({ tags: res.data.data });
-    // } catch (error) {
-    //   console.log(error);
-    //   alert("Não foi possível listar os tags.");
-    // }
+    try {
+      let res = await githubService.getRepos();
+      this.setState({ repos: res });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      // alert("Não foi possível listar os repositórios.");
+    }
   }
 
   render() {
@@ -44,23 +41,22 @@ class RepositoryPage extends React.Component {
       <div className="container">
         <PageTop
           title={"Repositórios"}
-          desc={"Listagem dos repositórios"}
+          desc={"Lisrepoem dos repositórios"}
         ></PageTop>
-        <p>To do...</p>
 
-        {/* {this.state.tags.map((tag) => (
-          <Link to={"/tag-detail/" + tag.id} key={tag.id}>
+        {this.state.repos.map((repo) => (
+          <Link to={"/repo-detail/" + repo.id} key={repo.id}>
             <div className="tag-card">
               <div className="tag-card__img">
-                <img src={tag.imageUrl} />
+                <img src="https://picsum.photos/200/300" />
               </div>
               <div className="tag-card__text">
-                <h4>{tag.title}</h4>
-                <p>{tag.content}</p>
+                <h4>{repo.name}</h4>
+                <p>{repo.description}</p>
               </div>
             </div>
           </Link>
-        ))} */}
+        ))}
       </div>
     );
   }

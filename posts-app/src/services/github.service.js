@@ -20,43 +20,52 @@ const githubService = {
   //   return false;
   // },
 
-  // async getGithubToken() {
-  //   let endpoint = apiUrl + "/github-get-token/";
-  //   const result = await axios.get(endpoint);
-  //   localStorage.setItem("tokenGithub", result.data.token);
-  // },
-
   async getUser() {
-    let endpoint = apiUrl + "/github-get-userdata/";
-    const result = await axios.get(endpoint);
+    const token = localStorage.getItem("tokenGithub");
 
-    if (result.data.userdata?.login) {
-      localStorage.setItem("loginGithub", result.data.userdata.login);
-      localStorage.setItem("nameGithub", result.data.userdata.name);
-      return {
-        login: result.data.userdata.login,
-        name: result.data.userdata.name,
-      };
-    } else {
-      return false;
+    if (token) {
+      let endpoint = apiUrl + "/github-get-userdata/" + token;
+      const result = await axios.get(endpoint);
+      if (result.data.userdata?.login) {
+        localStorage.setItem("loginGithub", result.data.userdata.login);
+        localStorage.setItem("nameGithub", result.data.userdata.name);
+        return {
+          login: result.data.userdata.login,
+          name: result.data.userdata.name,
+        };
+      } else {
+        return false;
+      }
     }
+
+    return false;
   },
 
-  clearLoggedUser() {
+  async clearLoggedUser() {
+    const token = localStorage.getItem("tokenGithub");
+    const username = localStorage.getItem("loginGithub");
+
     localStorage.clear();
+
+    let endpoint = apiUrl + "/github-logout-user";
+    const data = {
+      token: token,
+      username: username,
+    };
+    const result = await axios.post(endpoint, data);
   },
 
-  // async gitHubReposData() {
-  //   const token = localStorage.getItem("tokenGithub");
-  //   const user = localStorage.getItem("loginGithub");
-  //   let endpoint = apiUrl + "/github-respositories";
-  //   const data = {
-  //     token: token,
-  //     user: user,
-  //   };
-  //   const result = await axios.post(endpoint, data);
-  //   console.log(result);
-  // },
+  async getRepos() {
+    const token = localStorage.getItem("tokenGithub");
+    const user = localStorage.getItem("loginGithub");
+    let endpoint = apiUrl + "/github-repositories";
+    const data = {
+      token: token,
+      user: user,
+    };
+    const result = await axios.post(endpoint, data);
+    return result.data.userdata.items;
+  },
 };
 
 export default githubService;
