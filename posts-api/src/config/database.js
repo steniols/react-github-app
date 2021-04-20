@@ -26,7 +26,8 @@ const TAGS_SCHEMA = `
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
 		content TEXT,
-		imageUrl TEXT
+		imageUrl TEXT,
+    userId INTEGER
 	)
 `;
 
@@ -38,15 +39,15 @@ const INSERT_TAG = `
     INSERT OR IGNORE INTO tags (
         title,
 		content,
-		imageUrl
-    ) VALUES (?, ?, ?)
+		imageUrl,
+    userId
+    ) VALUES (?, ?, ?, ?)
 `;
 
 db.serialize(async () => {
   db.run("PRAGMA foreign_keys=ON");
   db.run(DROP_AUTH_SCHEMA);
   db.run(AUTH_SCHEMA);
-  // db.run(INSERT_AUTH, ["token", ""]);
   db.run(DROP_TAGS_SCHEMA);
   db.run(TAGS_SCHEMA);
 
@@ -55,6 +56,7 @@ db.serialize(async () => {
       "Javascript",
       "JavaScript é uma linguagem de programação interpretada estruturada, de script em alto nível com tipagem dinâmica fraca e multiparadigma.",
       "https://arquivo.devmedia.com.br/noticias/artigos/artigo_javascript-reduce-reduzindo-uma-colecao-em-um-unico-objeto_37981.jpg",
+      9152758,
     ]);
   } catch (e) {
     console.log(`Error: ${e}`);

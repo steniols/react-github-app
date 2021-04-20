@@ -33,18 +33,15 @@ module.exports = (app) => {
       .post(`https://github.com/login/oauth/access_token`, body, opts)
       .then((res) => res.data.access_token)
       .then((token) => {
-        (async () => {
-          const userdata = await getUser(token);
-
+        getUser(token).then((_res) => {
           db.run("INSERT OR IGNORE INTO auth (token, username) VALUES (?, ?)", [
             token,
             userdata.login,
           ]);
-
           res.redirect(
-            `http://localhost:3000/?username=${userdata.login}&token=${token}`
+            `http://localhost:3000/?username=${_res.login}&token=${token}`
           );
-        })();
+        });
       });
   });
 
@@ -60,7 +57,6 @@ module.exports = (app) => {
       res.status(400).json({ error: errors.join(",") });
       return;
     }
-
     const token = req.body.token;
     const username = req.body.username;
 
@@ -106,16 +102,18 @@ module.exports = (app) => {
       });
   });
 
-  app.get("/api/tags/", (req, res) => {
-    const sql = "select * from tags";
-    db.all(sql, (err, rows) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: "success",
-        data: rows,
+  app.post("/api/tags/", (req, res) => {
+    getUser(req.body.token).then((_res) => {
+      const sql = "select * from tags where userID = ?";
+      db.all(sql, _res.id, (err, rows) => {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: "success",
+          data: rows,
+        });
       });
     });
   });
@@ -135,7 +133,7 @@ module.exports = (app) => {
     });
   });
 
-  app.post("/api/tags/", (req, res) => {
+  app.post("/api/tags/save", (req, res) => {
     var errors = [];
     if (!req.body.title) {
       errors.push("Título não informado");
@@ -144,34 +142,38 @@ module.exports = (app) => {
       res.status(400).json({ error: errors.join(",") });
       return;
     }
-    var tag = {
-      title: req.body.title,
-      content: req.body.content ? req.body.content : "",
-      imageUrl: req.body.imageUrl ? req.body.imageUrl : "",
-    };
-    var sql = `
-			INSERT INTO tags (
-				title,
-				content,
-				imageUrl
-			) VALUES (?, ?, ?)
-    	`;
-    var params = [tag.title, tag.content, tag.imageUrl];
 
-    db.run(sql, params, function (err, result) {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: "success",
-        data: tag,
-        id: this.lastID,
+    getUser(req.body.token).then((_res) => {
+      var tag = {
+        title: req.body.title,
+        content: req.body.content ? req.body.content : "",
+        imageUrl: req.body.imageUrl ? req.body.imageUrl : "",
+        userId: _res.id,
+      };
+      var sql = `
+        INSERT INTO tags (
+          title,
+          content,
+          imageUrl,
+          userId
+        ) VALUES (?, ?, ?, ?)
+        `;
+      var params = [tag.title, tag.content, tag.imageUrl, tag.userId];
+      db.run(sql, params, function (err, result) {
+        if (err) {
+          res.status(400).json({ error: err.message });
+          return;
+        }
+        res.json({
+          message: "success",
+          data: tag,
+          id: this.lastID,
+        });
       });
     });
   });
 
-  app.put("/api/tags/:id", (req, res, next) => {
+  app.put("/api/tags/save/:id", (req, res, next) => {
     var tag = {
       title: req.body.title,
       content: req.body.content,

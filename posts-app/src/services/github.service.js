@@ -3,26 +3,8 @@ import axios from "axios";
 const apiUrl = "http://localhost:8003/api";
 
 const githubService = {
-  // async loginGithub(code) {
-  //   let endpoint = apiUrl + "/github-auth/" + code;
-  //   const result = await axios.get(endpoint);
-  //   if (result.data?.token) {
-  //     localStorage.clear();
-  //     localStorage.setItem("tokenGithub", result.data.token);
-  //     const userdata = await this.getUser();
-
-  //     return {
-  //       token: result.data.token,
-  //       user: userdata,
-  //     };
-  //   }
-
-  //   return false;
-  // },
-
   async getUser() {
     const token = localStorage.getItem("tokenGithub");
-
     if (token) {
       let endpoint = apiUrl + "/github-get-userdata/" + token;
       const result = await axios.get(endpoint);
@@ -53,6 +35,7 @@ const githubService = {
       username: username,
     };
     const result = await axios.post(endpoint, data);
+    return result;
   },
 
   async getRepos() {
