@@ -45,6 +45,7 @@ class PostEditPage extends React.Component {
       title: this.state.title,
       content: this.state.content,
       imageUrl: this.state.imageUrl,
+      token: localStorage.getItem("tokenGithub"),
     };
 
     if (!data.title || data.title === "") {
@@ -68,7 +69,7 @@ class PostEditPage extends React.Component {
         await tagsService.create(data);
         alert("Post criado com sucesso!");
       }
-      this.props.history.push("/tag-list");
+      // this.props.history.push("/tag-list");
     } catch (error) {
       console.log(error);
       alert("Erro ao criar tag.");

@@ -1,11 +1,14 @@
 import axios from "axios";
 
-const apiUrl = "http://localhost:8002/api";
+const apiUrl = "http://localhost:8003/api";
 
 const tagsService = {
   async list() {
     const enpoint = apiUrl + "/tags";
-    return axios.get(enpoint);
+    const data = {
+      token: localStorage.getItem("tokenGithub"),
+    };
+    return axios.post(enpoint, data);
   },
 
   async getOne(tagId) {
@@ -14,12 +17,12 @@ const tagsService = {
   },
 
   async create(data) {
-    const enpoint = apiUrl + "/tags";
-    return axios.tag(enpoint, data);
+    const enpoint = apiUrl + "/tags/save";
+    return axios.post(enpoint, data);
   },
 
   async edit(data, tagId) {
-    const enpoint = apiUrl + "/tags/" + tagId;
+    const enpoint = apiUrl + "/tags/save/" + tagId;
     return axios.put(enpoint, data);
   },
 
