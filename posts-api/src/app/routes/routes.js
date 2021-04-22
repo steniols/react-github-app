@@ -36,7 +36,7 @@ module.exports = (app) => {
         getUser(token).then((_res) => {
           db.run("INSERT OR IGNORE INTO auth (token, username) VALUES (?, ?)", [
             token,
-            userdata.login,
+            _res.login,
           ]);
           res.redirect(
             `http://localhost:3000/?username=${_res.login}&token=${token}`
@@ -72,6 +72,9 @@ module.exports = (app) => {
       if (err) {
         throw err;
       }
+
+      console.log("token req", req.params.token);
+      console.log("token", row);
       const token = row.token;
       axios
         .get("https://api.github.com/user", {
@@ -98,6 +101,7 @@ module.exports = (app) => {
         headers: { authorization: `token ${token}` },
       })
       .then((_res) => {
+        console.log(_res.data);
         res.json({ userdata: _res.data });
       });
   });

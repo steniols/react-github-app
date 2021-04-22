@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Link, Route } from "react-router-dom";
 
 import HomePage from "./pages/home/home-page";
 import PostListPage from "./pages/tag-list/tag-list-page";
@@ -9,7 +9,6 @@ import PostEditPage from "./pages/tag-edit/tag-edit-page";
 import RepositoryListPage from "./pages/repository-list/repository-list-page";
 
 import githubService from "./services/github.service";
-import queryString from "query-string";
 
 class App extends React.Component {
   constructor(props) {

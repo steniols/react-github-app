@@ -18,12 +18,12 @@ class PostListPage extends React.Component {
   componentDidMount() {
     githubService
       .getUser()
-      .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
-
-    this.loadPosts();
+      .then((res) =>
+        !res ? this.setState({ redirectTo: "/" }) : this.loadTags()
+      );
   }
 
-  async loadPosts() {
+  async loadTags() {
     try {
       let res = await tagsService.list();
       this.setState({ tags: res.data.data });
@@ -52,7 +52,7 @@ class PostListPage extends React.Component {
           <Link to={"/tag-detail/" + tag.id} key={tag.id}>
             <div className="tag-card">
               <div className="tag-card__img">
-                <img src={tag.imageUrl} />
+                <img src={tag.imageUrl} alt="" />
               </div>
               <div className="tag-card__text">
                 <h4>{tag.title}</h4>

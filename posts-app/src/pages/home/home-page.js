@@ -1,9 +1,7 @@
 // import React from "react";
 import React from "react";
 import { Redirect } from "react-router";
-import { useLocation, useHistory } from "react-router-dom";
 import githubService from "../../services/github.service";
-import queryString from "query-string";
 
 import PageTop from "../../components/page-top/page-top.component";
 

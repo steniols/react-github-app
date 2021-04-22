@@ -63,11 +63,7 @@ class PostDetailPage extends React.Component {
         </PageTop>
         <div className="row">
           <div className="col-6">
-            <img
-              className="tag-img"
-              src={this.state?.tag?.imageUrl}
-              alt="image"
-            />
+            <img className="tag-img" src={this.state?.tag?.imageUrl} alt="" />
           </div>
           <div className="col-6">
             <div className="tag-info">

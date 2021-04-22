@@ -14,11 +14,11 @@ class RepositoryPage extends React.Component {
   }
 
   componentDidMount() {
-    // githubService
-    //   .getUser()
-    //   .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
-
-    this.loadRepos();
+    githubService
+      .getUser()
+      .then((res) =>
+        !res ? this.setState({ redirectTo: "/" }) : this.loadRepos()
+      );
   }
 
   async loadRepos() {
@@ -41,14 +41,14 @@ class RepositoryPage extends React.Component {
       <div className="container">
         <PageTop
           title={"Repositórios"}
-          desc={"Lisrepoem dos repositórios"}
+          desc={"Lista dos repositórios"}
         ></PageTop>
 
         {this.state.repos.map((repo) => (
           <Link to={"/repo-detail/" + repo.id} key={repo.id}>
             <div className="tag-card">
               <div className="tag-card__img">
-                <img src="https://picsum.photos/200/300" />
+                <img src="https://picsum.photos/200/300" alt="" />
               </div>
               <div className="tag-card__text">
                 <h4>{repo.name}</h4>
