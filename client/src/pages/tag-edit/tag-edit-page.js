@@ -3,7 +3,6 @@ import { Redirect } from "react-router";
 import PageTop from "../../components/page-top/page-top.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import "./tag-edit.page.css";
 
 class PostEditPage extends React.Component {
   constructor(props) {
