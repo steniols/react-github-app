@@ -11,8 +11,6 @@ if (!dbExists) {
 
 const db = new sqlite3.Database(dbFile);
 
-// const db = new sqlite3.Database("data.db");
-
 const AUTH_SCHEMA = `
 CREATE TABLE IF NOT EXISTS auth (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,13 +22,6 @@ CREATE TABLE IF NOT EXISTS auth (
 const DROP_AUTH_SCHEMA = `
 	DROP TABLE IF EXISTS auth;
 `;
-
-// const INSERT_AUTH = `
-//     INSERT OR IGNORE INTO auth (
-//         field,
-//         value
-//     ) VALUES (?, ?)
-// `;
 
 const TAGS_SCHEMA = `
 	CREATE TABLE IF NOT EXISTS tags (

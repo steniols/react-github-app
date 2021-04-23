@@ -28,7 +28,6 @@ class RepositoryPage extends React.Component {
       console.log(res);
     } catch (error) {
       console.log(error);
-      // alert("Não foi possível listar os repositórios.");
     }
   }
 

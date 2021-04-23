@@ -4,6 +4,7 @@
 
 ```bash
 cd api
+cp .env.sample .env # and check/update configs
 npm install
 npm start
 ```
@@ -12,6 +13,7 @@ npm start
 
 ```bash
 cd client
+cp .env.sample .env # and check/update configs
 npm install
 npm start
 ```

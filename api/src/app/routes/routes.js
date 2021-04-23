@@ -2,33 +2,31 @@ const db = require("../../config/database");
 const md5 = require("md5");
 const axios = require("axios");
 
+require("dotenv").config();
+
 async function getUser(token) {
   const response = await axios.get("https://api.github.com/user", {
     headers: { authorization: `token ${token}` },
   });
-
   return await response.data;
 }
 
 module.exports = (app) => {
-  const clientId = "b04eb0c348dd9a0c2caa";
-  const clientSecret = "cb545e38b9749007fac4103fa589ba0644b44251";
-
   app.get("/", (req, res) => {
     res.redirect(
-      `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo`
+      `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&scope=repo`
     );
   });
 
   app.get("/api/github-auth-callback", (req, res) => {
     const code = req.query.code;
     const body = {
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
       code: code,
     };
-
     const opts = { headers: { accept: "application/json" } };
+
     axios
       .post(`https://github.com/login/oauth/access_token`, body, opts)
       .then((res) => res.data.access_token)
@@ -39,7 +37,7 @@ module.exports = (app) => {
             _res.login,
           ]);
           res.redirect(
-            `http://localhost:3000/?username=${_res.login}&token=${token}`
+            `${process.env.APP_URL}?username=${_res.login}&token=${token}`
           );
         });
       });
@@ -73,8 +71,6 @@ module.exports = (app) => {
         throw err;
       }
 
-      console.log("token req", req.params.token);
-      console.log("token", row);
       const token = row.token;
       axios
         .get("https://api.github.com/user", {
@@ -93,15 +89,11 @@ module.exports = (app) => {
     const token = req.body.token;
     const user = req.body.user;
 
-    console.log("token", token);
-    console.log("user", user);
-
     axios
       .get("https://api.github.com/search/repositories?q=user:" + user, {
         headers: { authorization: `token ${token}` },
       })
       .then((_res) => {
-        console.log(_res.data);
         res.json({ userdata: _res.data });
       });
   });
@@ -192,7 +184,6 @@ module.exports = (app) => {
       [tag.title, tag.content, tag.imageUrl, req.params.id],
       function (err, result) {
         if (err) {
-          console.log(err);
           res.status(400).json({ error: res.message });
           return;
         }
