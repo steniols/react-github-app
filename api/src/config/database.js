@@ -2,7 +2,7 @@ const md5 = require("md5");
 const sqlite3 = require("sqlite3").verbose();
 
 const fs = require("fs");
-const dbFile = "../../data.db";
+const dbFile = "./data.db";
 const dbExists = fs.existsSync(dbFile);
 
 if (!dbExists) {
