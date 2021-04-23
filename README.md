@@ -1,6 +1,6 @@
 # React github app
 
-Estudos de aplicação de login com react e express.
+Estudos de aplicação com react e express.
 
 ## API
 
