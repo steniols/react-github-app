@@ -50,6 +50,20 @@ const githubService = {
     const result = await axios.post(endpoint, data);
     return result.data.userdata.items;
   },
+
+  async getRepo(repoId) {
+    const token = localStorage.getItem("tokenGithub");
+    const user = localStorage.getItem("loginGithub");
+
+    const endpoint = apiUrl + "/github-repository/" + repoId;
+    const data = {
+      token: token,
+      user: user,
+    };
+    const result = await axios.post(endpoint, data);
+    console.log("data", result);
+    return result;
+  },
 };
 
 export default githubService;

@@ -3,10 +3,11 @@ import "./App.css";
 import { BrowserRouter, Link, Route } from "react-router-dom";
 
 import HomePage from "./pages/home/home-page";
-import PostListPage from "./pages/tag-list/tag-list-page";
-import PostDetailPage from "./pages/tag-detail/tag-detail-page";
-import PostEditPage from "./pages/tag-edit/tag-edit-page";
+import TagListPage from "./pages/tag-list/tag-list-page";
+import TagDetailPage from "./pages/tag-detail/tag-detail-page";
+import TagEditPage from "./pages/tag-edit/tag-edit-page";
 import RepositoryListPage from "./pages/repository-list/repository-list-page";
+import RepositoryDetailPage from "./pages/repository-detail/repository-detail-page";
 
 import githubService from "./services/github.service";
 
@@ -102,14 +103,19 @@ class App extends React.Component {
           </div>
         </nav>
         <Route path="/" exact={true} component={HomePage} />
-        <Route path="/tag-list" exact={true} component={PostListPage} />
-        <Route path="/tag-detail/:id" exact={true} component={PostDetailPage} />
-        <Route path="/tag-add" exact={true} component={PostEditPage} />
-        <Route path="/tag-edit/:id" exact={true} component={PostEditPage} />
+        <Route path="/tag-list" exact={true} component={TagListPage} />
+        <Route path="/tag-detail/:id" exact={true} component={TagDetailPage} />
+        <Route path="/tag-add" exact={true} component={TagEditPage} />
+        <Route path="/tag-edit/:id" exact={true} component={TagEditPage} />
         <Route
           path="/repository-list"
           exact={true}
           component={RepositoryListPage}
+        />
+        <Route
+          path="/repository-detail/:id"
+          exact={true}
+          component={RepositoryDetailPage}
         />
       </BrowserRouter>
     );

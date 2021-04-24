@@ -90,10 +90,29 @@ module.exports = (app) => {
     const user = req.body.user;
 
     axios
-      .get("https://api.github.com/search/repositories?q=user:" + user, {
+      .get(
+        "https://api.github.com/search/repositories?q=user:" +
+          user +
+          "&id=171121436",
+        {
+          headers: { authorization: `token ${token}` },
+        }
+      )
+      .then((_res) => {
+        res.json({ userdata: _res.data });
+      });
+  });
+
+  app.post("/api/github-repository/:id", (req, res) => {
+    const token = req.body.token;
+    const user = req.body.user;
+
+    axios
+      .get("https://api.github.com/repos/" + user + "/" + req.params.id, {
         headers: { authorization: `token ${token}` },
       })
       .then((_res) => {
+        console.log(_res.data);
         res.json({ userdata: _res.data });
       });
   });

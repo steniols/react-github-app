@@ -3,6 +3,7 @@ import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
 import githubService from "../../services/github.service";
+import "./repository-list.page.css";
 
 class RepositoryPage extends React.Component {
   constructor(props) {
@@ -44,12 +45,12 @@ class RepositoryPage extends React.Component {
         ></PageTop>
 
         {this.state.repos.map((repo) => (
-          <Link to={"/repo-detail/" + repo.id} key={repo.id}>
-            <div className="tag-card">
-              <div className="tag-card__img">
+          <Link to={"/repository-detail/" + repo.name} key={repo.id}>
+            <div className="repository-card">
+              {/* <div className="repository-card__img">
                 <img src="https://picsum.photos/200/300" alt="" />
-              </div>
-              <div className="tag-card__text">
+              </div> */}
+              <div className="repository-card__text">
                 <h4>{repo.name}</h4>
                 <p>{repo.description}</p>
               </div>

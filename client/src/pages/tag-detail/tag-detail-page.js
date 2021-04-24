@@ -20,10 +20,10 @@ class PostDetailPage extends React.Component {
       .then((res) => (!res ? this.setState({ redirectTo: "/" }) : null));
 
     let tagId = this.props.match.params.id;
-    this.loadPost(tagId);
+    this.loadTag(tagId);
   }
 
-  async loadPost(tagId) {
+  async loadTag(tagId) {
     try {
       let res = await tagsService.getOne(tagId);
       this.setState({ tag: res.data.data[0] });
@@ -33,7 +33,7 @@ class PostDetailPage extends React.Component {
     }
   }
 
-  async deletePost(tagId) {
+  async deleteTag(tagId) {
     if (!window.confirm("Deseja realmente excluir este tag?")) return;
 
     try {
@@ -53,7 +53,7 @@ class PostDetailPage extends React.Component {
 
     return (
       <div className="container">
-        <PageTop title={"Post"} desc={"Detalhes do tag"}>
+        <PageTop title={"Tag"} desc={"Detalhes do tag"}>
           <button
             className="btn btn-light"
             onClick={() => this.props.history.goBack()}
@@ -82,7 +82,7 @@ class PostDetailPage extends React.Component {
               <button
                 type="button"
                 className="btn btn-sm btn-outline-danger"
-                onClick={() => this.deletePost(this.state.tag.id)}
+                onClick={() => this.deleteTag(this.state.tag.id)}
               >
                 Excluir
               </button>

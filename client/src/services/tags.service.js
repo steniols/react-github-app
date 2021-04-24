@@ -5,31 +5,31 @@ const apiUrl = env.API_URL;
 
 const tagsService = {
   async list() {
-    const enpoint = apiUrl + "/tags";
+    const endpoint = apiUrl + "/tags";
     const data = {
       token: localStorage.getItem("tokenGithub"),
     };
-    return axios.post(enpoint, data);
+    return axios.post(endpoint, data);
   },
 
   async getOne(tagId) {
-    const enpoint = apiUrl + "/tags/" + tagId;
-    return axios.get(enpoint);
+    const endpoint = apiUrl + "/tags/" + tagId;
+    return axios.get(endpoint);
   },
 
   async create(data) {
-    const enpoint = apiUrl + "/tags/save";
-    return axios.post(enpoint, data);
+    const endpoint = apiUrl + "/tags/save";
+    return axios.post(endpoint, data);
   },
 
   async edit(data, tagId) {
-    const enpoint = apiUrl + "/tags/save/" + tagId;
-    return axios.put(enpoint, data);
+    const endpoint = apiUrl + "/tags/save/" + tagId;
+    return axios.put(endpoint, data);
   },
 
   async delete(tagId) {
-    const enpoint = apiUrl + "/tags/" + tagId;
-    return axios.delete(enpoint);
+    const endpoint = apiUrl + "/tags/" + tagId;
+    return axios.delete(endpoint);
   },
 };
 
