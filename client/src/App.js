@@ -36,11 +36,11 @@ class App extends React.Component {
 
   logout() {
     githubService.clearLoggedUser();
-    window.location.href = "http://localhost:3000";
+    window.location.href = "http://localhost:3000/github";
   }
 
   redirectGitHubLogin() {
-    window.location.href = "http://localhost:8003";
+    window.location.href = "http://localhost:8003/github";
   }
 
   loadUserData() {

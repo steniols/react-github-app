@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const routes = require("../app/routes/routes");
 var cors = require("cors");
 app.use(cors());
 
@@ -20,6 +19,9 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-routes(app);
+// routes(app);
+
+app.use("/tags", require("../app/routes/tags"));
+app.use("/github", require("../app/routes/github"));
 
 module.exports = app;
