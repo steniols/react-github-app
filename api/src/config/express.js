@@ -19,7 +19,6 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// routes(app);
 
 app.use("/tags", require("../app/routes/tags"));
 app.use("/github", require("../app/routes/github"));

@@ -3,49 +3,14 @@ const db = require("../../config/database");
 const axios = require("axios");
 require("dotenv").config();
 
-router.post("/rel-tags/", (req, res) => {
-  var errors = [];
-  if (!req.body.repoId) {
-    errors.push("Id do repositório não informado");
-  }
+async function getUser(token) {
+  const response = await axios.get("https://api.github.com/user", {
+    headers: { authorization: `token ${token}` },
+  });
+  return await response.data;
+}
 
-  if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
-    return;
-  }
-
-  const repoId = req.body.repoId;
-  const tags = req.body.tags;
-
-  relData = [];
-  if (tags) {
-    tags.map((tag) => {
-      relData.push([repoId, tag]);
-    });
-  }
-
-  db.run(
-    "DELETE FROM rel_tags_repository WHERE repositoryId = ?",
-    repoId,
-    function (err, result) {
-      if (err) {
-        res.status(400).json({ error: res.message });
-        return;
-      }
-    }
-  );
-
-  const sql = `INSERT INTO rel_tags_repository (
-      repositoryId,
-      tagId
-    ) VALUES (?, ?)`;
-
-  for (var i = 0; i < relData.length; i++) {
-    db.run(sql, relData[i][0], relData[i][1]);
-  }
-});
-
-router.post("/tags/", (req, res) => {
+router.post("/", (req, res) => {
   getUser(req.body.token).then((_res) => {
     const sql = "select * from tags where userID = ?";
     db.all(sql, _res.id, (err, rows) => {
@@ -61,7 +26,7 @@ router.post("/tags/", (req, res) => {
   });
 });
 
-router.get("/tags/:id", (req, res) => {
+router.get("/:id", (req, res) => {
   const sql = "select * from tags where id = ?";
   const params = [req.params.id];
   db.all(sql, params, (err, row) => {
@@ -76,7 +41,7 @@ router.get("/tags/:id", (req, res) => {
   });
 });
 
-router.post("/tags/save", (req, res) => {
+router.post("/save", (req, res) => {
   var errors = [];
   if (!req.body.title) {
     errors.push("Título não informado");
@@ -116,7 +81,7 @@ router.post("/tags/save", (req, res) => {
   });
 });
 
-router.put("/tags/save/:id", (req, res, next) => {
+router.put("/save/:id", (req, res, next) => {
   var tag = {
     title: req.body.title,
     content: req.body.content,
@@ -143,7 +108,7 @@ router.put("/tags/save/:id", (req, res, next) => {
   );
 });
 
-router.delete("/tags/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   db.run(
     "DELETE FROM tags WHERE id = ?",
     req.params.id,

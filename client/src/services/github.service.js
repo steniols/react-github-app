@@ -20,7 +20,6 @@ const githubService = {
         return false;
       }
     }
-
     return false;
   },
 

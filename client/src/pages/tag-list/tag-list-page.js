@@ -5,6 +5,7 @@ import PageTop from "../../components/page-top/page-top.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import "./tag-list.page.css";
+import { toast } from "react-toastify";
 
 class PostListPage extends React.Component {
   constructor(props) {
@@ -28,8 +29,7 @@ class PostListPage extends React.Component {
       let res = await tagsService.list();
       this.setState({ tags: res.data.data });
     } catch (error) {
-      console.log(error);
-      alert("Não foi possível listar os tags.");
+      toast.error("Não foi possível listar os tags.");
     }
   }
 

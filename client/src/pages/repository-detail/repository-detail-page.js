@@ -5,7 +5,6 @@ import tagsService from "../../services/tags.service";
 import PageTop from "../../components/page-top/page-top.component";
 import SelectTag from "../../components/selectTag.component";
 import "./repository-detail.page.css";
-
 import { toast } from "react-toastify";
 
 class RepositoryDetailPage extends React.Component {
@@ -32,7 +31,6 @@ class RepositoryDetailPage extends React.Component {
       let res = await githubService.getRepo(repositoryId);
       this.setState({ repository: res.data.userdata });
     } catch (error) {
-      console.log(error);
       toast.error("Não foi possível carregar o repositório.");
     }
   }

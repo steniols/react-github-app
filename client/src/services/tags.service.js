@@ -1,11 +1,11 @@
 import axios from "axios";
 import env from "react-dotenv";
 
-const apiUrl = env.API_URL;
+const apiUrl = env.API_URL + "/tags";
 
 const tagsService = {
   async list() {
-    const endpoint = apiUrl + "/tags";
+    const endpoint = apiUrl;
     const data = {
       token: localStorage.getItem("tokenGithub"),
     };
@@ -13,22 +13,22 @@ const tagsService = {
   },
 
   async getOne(tagId) {
-    const endpoint = apiUrl + "/tags/" + tagId;
+    const endpoint = apiUrl + "/" + tagId;
     return axios.get(endpoint);
   },
 
   async create(data) {
-    const endpoint = apiUrl + "/tags/save";
+    const endpoint = apiUrl + "/save";
     return axios.post(endpoint, data);
   },
 
   async edit(data, tagId) {
-    const endpoint = apiUrl + "/tags/save/" + tagId;
+    const endpoint = apiUrl + "/save/" + tagId;
     return axios.put(endpoint, data);
   },
 
   async delete(tagId) {
-    const endpoint = apiUrl + "/tags/" + tagId;
+    const endpoint = apiUrl + "/" + tagId;
     return axios.delete(endpoint);
   },
 };
