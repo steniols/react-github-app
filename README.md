@@ -1,4 +1,6 @@
-# React github client
+# React github app
+
+Estudos de aplicação com react e express.
 
 ## API
 
