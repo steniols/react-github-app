@@ -85,22 +85,21 @@ module.exports = (app) => {
     });
   });
 
-  app.post("/api/github-repositories", (req, res) => {
+  app.post("/api/github-repositories", async (req, res) => {
     const token = req.body.token;
     const user = req.body.user;
 
-    axios
-      .get(
-        "https://api.github.com/search/repositories?q=user:" +
-          user +
-          "&id=171121436",
-        {
-          headers: { authorization: `token ${token}` },
-        }
-      )
-      .then((_res) => {
-        res.json({ userdata: _res.data });
-      });
+    const _res = await axios.get(
+      "https://api.github.com/search/repositories?q=user:" +
+        user +
+        "&id=171121436",
+      {
+        headers: { authorization: `token ${token}` },
+      }
+    );
+
+    const repositorios = _res.data.items;
+    res.json({ userdata: _res.data });
   });
 
   app.post("/api/github-repository/:id", (req, res) => {
@@ -112,9 +111,67 @@ module.exports = (app) => {
         headers: { authorization: `token ${token}` },
       })
       .then((_res) => {
-        console.log(_res.data);
-        res.json({ userdata: _res.data });
+        const repositoryId = _res.data.id;
+        const { id, name, full_name, description, clone_url } = _res.data;
+
+        const repoData = {
+          id,
+          name,
+          full_name,
+          description,
+          clone_url,
+        };
+
+        const sql =
+          "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
+        db.all(sql, repositoryId, (err, rows) => {
+          repoData.tags = rows ? rows.map((row) => row.tagId) : [];
+          repoData.tagsDesc = rows ? rows.map((row) => row.title) : [];
+          res.json({ userdata: repoData });
+        });
       });
+  });
+
+  app.post("/api/rel-tags/", (req, res) => {
+    var errors = [];
+    if (!req.body.repoId) {
+      errors.push("Id do repositório não informado");
+    }
+
+    if (errors.length) {
+      res.status(400).json({ error: errors.join(",") });
+      return;
+    }
+
+    const repoId = req.body.repoId;
+    const tags = req.body.tags;
+
+    relData = [];
+    if (tags) {
+      tags.map((tag) => {
+        relData.push([repoId, tag]);
+      });
+    }
+
+    db.run(
+      "DELETE FROM rel_tags_repository WHERE repositoryId = ?",
+      repoId,
+      function (err, result) {
+        if (err) {
+          res.status(400).json({ error: res.message });
+          return;
+        }
+      }
+    );
+
+    const sql = `INSERT INTO rel_tags_repository (
+      repositoryId,
+      tagId
+    ) VALUES (?, ?)`;
+
+    for (var i = 0; i < relData.length; i++) {
+      db.run(sql, relData[i][0], relData[i][1]);
+    }
   });
 
   app.post("/api/tags/", (req, res) => {

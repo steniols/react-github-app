@@ -3,6 +3,7 @@ import { Redirect } from "react-router";
 import PageTop from "../../components/page-top/page-top.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
+import { toast } from "react-toastify";
 
 class PostEditPage extends React.Component {
   constructor(props) {
@@ -34,8 +35,7 @@ class PostEditPage extends React.Component {
       let tag = res.data.data[0];
       this.setState(tag);
     } catch (error) {
-      console.log(error);
-      alert("Não foi possível carregar tag.");
+      toast.error("Não foi possível carregar tag.");
     }
   }
 
@@ -48,30 +48,28 @@ class PostEditPage extends React.Component {
     };
 
     if (!data.title || data.title === "") {
-      alert("Título é obrigatório!");
+      toast.error("O Título é obrigatório!");
       return;
     }
     if (!data.content || data.content === "") {
-      alert("Conteúdo é obrigatório!");
+      toast.error("O Conteúdo é obrigatório!");
       return;
     }
     if (!data.imageUrl || data.imageUrl === "") {
-      alert("Imagem URl é obrigatório!");
+      toast.error("A Imagem URl é obrigatória!");
       return;
     }
 
     try {
       if (this.state.id) {
         await tagsService.edit(data, this.state.id);
-        alert("Post editado com sucesso!");
+        toast.success("A tag foi editada com sucesso!");
       } else {
         await tagsService.create(data);
-        alert("Post criado com sucesso!");
+        toast.success("A tag foi criado com sucesso!");
       }
-      // this.props.history.push("/tag-list");
     } catch (error) {
-      console.log(error);
-      alert("Erro ao criar tag.");
+      toast.error("Erro ao criar tag!");
     }
   }
 

@@ -11,6 +11,11 @@ import RepositoryDetailPage from "./pages/repository-detail/repository-detail-pa
 
 import githubService from "./services/github.service";
 
+import "react-toastify/dist/ReactToastify.css";
+
+import { toast } from "react-toastify";
+toast.configure();
+
 class App extends React.Component {
   constructor(props) {
     super(props);

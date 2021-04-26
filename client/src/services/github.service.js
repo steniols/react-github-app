@@ -48,7 +48,22 @@ const githubService = {
       user: user,
     };
     const result = await axios.post(endpoint, data);
-    return result.data.userdata.items;
+    const repositories = result.data.userdata.items;
+
+    let repositories_data = await Promise.all(
+      repositories.map(async (r) => {
+        try {
+          const repo = await this.getRepo(r.name);
+          console.log("desc", repo.data.userdata.tagsDesc);
+          r.tags = repo.data.userdata.tagsDesc;
+          return r;
+        } catch (err) {
+          throw err;
+        }
+      })
+    );
+
+    return repositories_data;
   },
 
   async getRepo(repoId) {
@@ -63,6 +78,16 @@ const githubService = {
     const result = await axios.post(endpoint, data);
     console.log("data", result);
     return result;
+  },
+
+  async relTags(repoId, tags) {
+    let endpoint = apiUrl + "/rel-tags";
+    const data = {
+      repoId: repoId,
+      tags: tags,
+    };
+    const result = await axios.post(endpoint, data);
+    return result.data;
   },
 };
 

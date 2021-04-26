@@ -1,10 +1,12 @@
 import React from "react";
 import { Redirect } from "react-router";
-import PageTop from "../../components/page-top/page-top.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
+import PageTop from "../../components/page-top/page-top.component";
+import SelectTag from "../../components/selectTag.component";
 import "./repository-detail.page.css";
-import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
+
+import { toast } from "react-toastify";
 
 class RepositoryDetailPage extends React.Component {
   constructor(props) {
@@ -31,7 +33,7 @@ class RepositoryDetailPage extends React.Component {
       this.setState({ repository: res.data.userdata });
     } catch (error) {
       console.log(error);
-      alert("Não foi possível carregar o repositório.");
+      toast.error("Não foi possível carregar o repositório.");
     }
   }
 
@@ -43,16 +45,21 @@ class RepositoryDetailPage extends React.Component {
         options.push({ key: _res.id, label: _res.title });
       });
       this.setState({ tags: options });
-    } catch (error) {
-      console.log(error);
-      alert("Não foi possível listar os tags.");
-    }
+    } catch (error) {}
   }
 
-  handleSubmit(selected) {
-    alert("Um nome foi enviado");
-    // TODO: criar relação.
-    console.log(selected);
+  handleSubmit(event, repositoryId) {
+    try {
+      const tags = event.map((e) => e.value);
+      const res = githubService.relTags(repositoryId, tags);
+
+      if (res) {
+        toast.success("As tags do repositório foram atualizadas com sucesso!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Ocorreu um erro ao atualizar as tags deste repositório");
+    }
   }
 
   render() {
@@ -71,11 +78,35 @@ class RepositoryDetailPage extends React.Component {
           </button>
         </PageTop>
         <div className="row">
-          <div className="col-12">
+          <div className="col-6">
             <div className="repository-info">
               <h4>ID</h4>
               <p>{this.state.repository?.id}</p>
             </div>
+            <div className="repository-info">
+              <h4>Descrição</h4>
+              <p>{this.state.repository?.description}</p>
+            </div>
+
+            {this.state.tags ? (
+              <form>
+                <div className="form-group">
+                  <label htmlFor="">
+                    <h4>Relacionar Tags</h4>
+                  </label>
+                  {this.state.repository ? (
+                    <SelectTag
+                      repositoryId={this.state.repository.id}
+                      tags={this.state.tags}
+                      tagsSelected={this.state.repository.tags}
+                      onChangeValue={this.handleSubmit}
+                    ></SelectTag>
+                  ) : null}
+                </div>
+              </form>
+            ) : null}
+          </div>
+          <div className="col-6">
             <div className="repository-info">
               <h4>Título</h4>
               <a href={this.state.repository?.url}>
@@ -83,29 +114,9 @@ class RepositoryDetailPage extends React.Component {
               </a>
             </div>
             <div className="repository-info">
-              <h4>Descrição</h4>
-              <p>{this.state.repository?.description}</p>
-            </div>
-            <div className="repository-info">
               <h4>Clone URL</h4>
               <p>{this.state.repository?.clone_url}</p>
             </div>
-            {this.state.tags ? (
-              <form onSubmit={this.handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="">
-                    <h4>Relacionar Tags</h4>
-                  </label>
-                  <DropdownMultiselect
-                    options={this.state.tags ? this.state.tags : []}
-                    handleOnChange={(selected) => {
-                      this.handleSubmit(selected);
-                    }}
-                    name="tags"
-                  />
-                </div>
-              </form>
-            ) : null}
           </div>
         </div>
       </div>

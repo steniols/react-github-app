@@ -53,6 +53,15 @@ class RepositoryPage extends React.Component {
               <div className="repository-card__text">
                 <h4>{repo.name}</h4>
                 <p>{repo.description}</p>
+                <p>
+                  {repo.tags
+                    ? repo.tags.map((r) => (
+                        <span className="badge badge-primary" key={r}>
+                          {r}
+                        </span>
+                      ))
+                    : null}
+                </p>
               </div>
             </div>
           </Link>

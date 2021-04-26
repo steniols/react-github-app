@@ -33,6 +33,14 @@ const TAGS_SCHEMA = `
 	)
 `;
 
+const REL_SCHEMA = `
+	CREATE TABLE IF NOT EXISTS rel_tags_repository (
+		tagId INT NOT NULL,
+		repositoryId INT NOT NULL,
+    PRIMARY KEY (tagId, repositoryId)
+	)
+`;
+
 const DROP_TAGS_SCHEMA = `
 	DROP TABLE IF EXISTS tags;
 `;
@@ -53,6 +61,7 @@ db.serialize(async () => {
     db.run(AUTH_SCHEMA);
     db.run(DROP_TAGS_SCHEMA);
     db.run(TAGS_SCHEMA);
+    db.run(REL_SCHEMA);
 
     try {
       db.run(INSERT_TAG, [

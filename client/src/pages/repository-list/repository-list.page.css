@@ -11,7 +11,6 @@ a:link {
     overflow: hidden;
     margin-bottom: 16px;
     padding: 16px;
-
 }
 
 .repository-card__text{
@@ -31,4 +30,8 @@ a:link {
     color: #666;
     font-size: 14px;
     margin: 0;
+}
+
+.badge {
+    margin-right: 5px;
 }
