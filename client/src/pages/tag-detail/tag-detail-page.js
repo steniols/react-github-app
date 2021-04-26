@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import PageTop from "../../components/page-top/page-top.component";
+import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import "./tag-detail.page.css";
@@ -61,6 +62,9 @@ class PostDetailPage extends React.Component {
             Voltar
           </button>
         </PageTop>
+
+        {!this.state.tag ? <Loader /> : null}
+
         <div className="row">
           <div className="col-6">
             <img className="tag-img" src={this.state?.tag?.imageUrl} alt="" />

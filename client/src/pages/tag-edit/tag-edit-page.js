@@ -96,6 +96,7 @@ class PostEditPage extends React.Component {
             Salvar
           </button>
         </PageTop>
+
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
             <label htmlFor="title">Título</label>

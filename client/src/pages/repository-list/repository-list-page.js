@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
+import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import "./repository-list.page.css";
 import { toast } from "react-toastify";
@@ -43,6 +44,8 @@ class RepositoryPage extends React.Component {
           title={"Repositórios"}
           desc={"Lista dos repositórios"}
         ></PageTop>
+
+        {this.state.repos.length <= 0 ? <Loader /> : null}
 
         {this.state.repos.map((repo) => (
           <Link to={"/repository-detail/" + repo.name} key={repo.id}>
