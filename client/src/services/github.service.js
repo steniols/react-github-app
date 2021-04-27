@@ -49,19 +49,7 @@ const githubService = {
     const result = await axios.post(endpoint, data);
     const repositories = result.data.repositories;
 
-    let repositories_data = await Promise.all(
-      repositories.map(async (r) => {
-        try {
-          const repo = await this.getRepo(r.name);
-          r.tags = repo.data.userdata.tagsDesc;
-          return r;
-        } catch (err) {
-          throw err;
-        }
-      })
-    );
-
-    return repositories_data;
+    return repositories;
   },
 
   async getRepo(repoId) {

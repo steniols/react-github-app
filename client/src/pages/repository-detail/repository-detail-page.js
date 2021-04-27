@@ -5,7 +5,6 @@ import tagsService from "../../services/tags.service";
 import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import SelectTag from "../../components/selectTag.component";
-import "./repository-detail.page.css";
 import { toast } from "react-toastify";
 
 class RepositoryDetailPage extends React.Component {
@@ -80,13 +79,13 @@ class RepositoryDetailPage extends React.Component {
         {!this.state.repository ? (
           <Loader />
         ) : (
-          <div className="row">
+          <div className="row info">
             <div className="col-6">
-              <div className="repository-info">
+              <div className="repository-info mb-4">
                 <h4>ID</h4>
                 <p>{this.state.repository?.id}</p>
               </div>
-              <div className="repository-info">
+              <div className="repository-info mb-4">
                 <h4>Descrição</h4>
                 <p>{this.state.repository?.description}</p>
               </div>
@@ -110,11 +109,11 @@ class RepositoryDetailPage extends React.Component {
               ) : null}
             </div>
             <div className="col-6">
-              <div className="repository-info">
+              <div className="repository-info mb-4">
                 <h4>Título</h4>
                 <p>{this.state.repository?.name}</p>
               </div>
-              <div className="repository-info">
+              <div className="repository-info mb-4">
                 <h4>Clone URL</h4>
                 <p>{this.state.repository?.clone_url}</p>
               </div>

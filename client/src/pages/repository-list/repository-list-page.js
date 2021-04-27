@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
-import "./repository-list.page.css";
 import { toast } from "react-toastify";
 
 class RepositoryPage extends React.Component {
@@ -49,15 +48,15 @@ class RepositoryPage extends React.Component {
 
         {this.state.repos.map((repo) => (
           <Link to={"/repository-detail/" + repo.name} key={repo.id}>
-            <div className="repository-card">
-              <div className="repository-card__text">
+            <div className="card">
+              <div className="card-text">
                 <h4>{repo.name}</h4>
                 <p className="mt-1">{repo.description}</p>
                 <p>
                   {repo.tags
                     ? repo.tags.map((r) => (
-                        <span className="badge badge-primary" key={r}>
-                          {r}
+                        <span className="badge badge-primary" key={r.id}>
+                          {r.title}
                         </span>
                       ))
                     : null}

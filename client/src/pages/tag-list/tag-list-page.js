@@ -5,7 +5,6 @@ import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import "./tag-list.page.css";
 import { toast } from "react-toastify";
 
 class PostListPage extends React.Component {
@@ -54,11 +53,11 @@ class PostListPage extends React.Component {
 
         {this.state.tags.map((tag) => (
           <Link to={"/tag-detail/" + tag.id} key={tag.id}>
-            <div className="tag-card">
-              <div className="tag-card__img">
+            <div className="card">
+              <div className="card-img">
                 <img src={tag.imageUrl} alt="" />
               </div>
-              <div className="tag-card__text">
+              <div className="card-text">
                 <h4>{tag.title}</h4>
                 <p>{tag.content}</p>
               </div>

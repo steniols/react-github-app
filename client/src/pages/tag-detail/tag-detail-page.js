@@ -4,7 +4,6 @@ import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import "./tag-detail.page.css";
 
 class PostDetailPage extends React.Component {
   constructor(props) {
@@ -67,18 +66,18 @@ class PostDetailPage extends React.Component {
 
         <div className="row">
           <div className="col-6">
-            <img className="tag-img" src={this.state?.tag?.imageUrl} alt="" />
+            <img className="img" src={this.state?.tag?.imageUrl} alt="" />
           </div>
           <div className="col-6">
-            <div className="tag-info">
+            <div className="info">
               <h4>ID</h4>
               <p>{this.state.tag?.id}</p>
             </div>
-            <div className="tag-info">
+            <div className="info">
               <h4>Título</h4>
               <p>{this.state.tag?.title}</p>
             </div>
-            <div className="tag-info">
+            <div className="info">
               <h4>Conteúdo</h4>
               <p>{this.state.tag?.content}</p>
             </div>

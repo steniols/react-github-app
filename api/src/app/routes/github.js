@@ -111,19 +111,17 @@ router.post("/github-repositories", async (req, res) => {
       "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
     const db = await dbPromise;
 
-    // let repositories_data = await Promise.all(
-    //   repositories.map(async (r) => {
-    //     try {
-    //       const repo = await db.all(sql, r.id);
-    //       r.tags = repo;
-    //       return r;
-    //     } catch (err) {
-    //       throw err;
-    //     }
-    //   })
-    // );
-
-    // console.log(await repositories_data);
+    await Promise.all(
+      repositories.map(async (r) => {
+        try {
+          const repo = await db.all(sql, r.id);
+          r.tags = repo;
+          return r;
+        } catch (err) {
+          throw err;
+        }
+      })
+    );
 
     res.json({ repositories });
   } catch (error) {
