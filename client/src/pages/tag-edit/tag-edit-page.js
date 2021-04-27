@@ -81,7 +81,7 @@ class PostEditPage extends React.Component {
     let title = this.state.id ? "Editar Post" : "Novo Post";
     let desc = this.state.id
       ? "Editar informações de um tag"
-      : "Formulário de criação de tags";
+      : "Formulário para a criação de tags";
 
     return (
       <div className="container">

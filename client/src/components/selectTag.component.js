@@ -11,6 +11,15 @@ const SelectTag = (props) => {
 
   const [selected, setSelected] = useState(defaultSelectedOptions);
 
+  const overrideStrings = {
+    allItemsAreSelected: "Todas as tags estão relacionadas",
+    clearSearch: "Limpar pesquisa",
+    noOptions: "Sem opções",
+    search: "Pesquisar",
+    selectAll: "Selecionar todos",
+    selectSomeItems: "Selecionar...",
+  };
+
   return (
     <div>
       <MultiSelect
@@ -21,6 +30,7 @@ const SelectTag = (props) => {
           props.onChangeValue(e, props.repositoryId);
         }}
         labelledBy="Select"
+        overrideStrings={overrideStrings}
       />
     </div>
   );

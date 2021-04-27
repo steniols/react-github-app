@@ -36,7 +36,7 @@ class App extends React.Component {
 
   logout() {
     githubService.clearLoggedUser();
-    window.location.href = "http://localhost:3000/github";
+    window.location.href = "http://localhost:3000/";
   }
 
   redirectGitHubLogin() {
@@ -68,15 +68,19 @@ class App extends React.Component {
           </button>
           <div className="collapse navbar-collapse" id="navbarMenu">
             <div className="navbar-nav">
-              <Link to="/" className="nav-item nav-link">
-                Home
-              </Link>
-              <Link to="/repository-list" className="nav-item nav-link">
-                Repositórios
-              </Link>
-              <Link to="/tag-list" className="nav-item nav-link">
-                Tags
-              </Link>
+              {this.state.login ? (
+                <>
+                  <Link to="/" className="nav-item nav-link">
+                    Home
+                  </Link>
+                  <Link to="/repository-list" className="nav-item nav-link">
+                    Repositórios
+                  </Link>
+                  <Link to="/tag-list" className="nav-item nav-link">
+                    Tags
+                  </Link>
+                </>
+              ) : null}
             </div>
             <div className="nav-user">
               {this.state.login ? (

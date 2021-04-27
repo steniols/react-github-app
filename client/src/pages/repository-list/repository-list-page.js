@@ -52,7 +52,7 @@ class RepositoryPage extends React.Component {
             <div className="repository-card">
               <div className="repository-card__text">
                 <h4>{repo.name}</h4>
-                <p>{repo.description}</p>
+                <p className="mt-1">{repo.description}</p>
                 <p>
                   {repo.tags
                     ? repo.tags.map((r) => (

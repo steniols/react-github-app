@@ -53,7 +53,6 @@ const githubService = {
       repositories.map(async (r) => {
         try {
           const repo = await this.getRepo(r.name);
-          console.log("desc", repo.data.userdata.tagsDesc);
           r.tags = repo.data.userdata.tagsDesc;
           return r;
         } catch (err) {
@@ -75,7 +74,6 @@ const githubService = {
       user: user,
     };
     const result = await axios.post(endpoint, data);
-    console.log("data", result);
     return result;
   },
 
