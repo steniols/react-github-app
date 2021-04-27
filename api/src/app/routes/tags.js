@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const db = require("../../config/database");
+const dbPromise = require("../../config/database");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -10,38 +10,52 @@ async function getUser(token) {
   return await response.data;
 }
 
-router.post("/", (req, res) => {
-  getUser(req.body.token).then((_res) => {
+router.get("/", async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const user = await getUser("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");
     const sql = "select * from tags where userID = ?";
-    db.all(sql, _res.id, (err, rows) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: "success",
-        data: rows,
-      });
-    });
-  });
+    const tags = await db.all(sql, user.id);
+    res.json({ tags });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.get("/:id", (req, res) => {
-  const sql = "select * from tags where id = ?";
-  const params = [req.params.id];
-  db.all(sql, params, (err, row) => {
-    if (err) {
-      res.status(400).json({ error: err.message });
-      return;
-    }
+router.post("/", async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const user = await getUser(req.body.token);
+    const sql = "select * from tags where userID = ?";
+    const tags = await db.all(sql, user.id);
     res.json({
       message: "success",
-      data: row,
+      data: tags,
     });
-  });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.post("/save", (req, res) => {
+router.get("/:id", async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const sql = "select * from tags where id = ?";
+    const params = [req.params.id];
+    const tag = await db.all(sql, params);
+    res.json({
+      message: "success",
+      data: tag,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.post("/save", async (req, res) => {
   var errors = [];
   if (!req.body.title) {
     errors.push("Título não informado");
@@ -51,75 +65,72 @@ router.post("/save", (req, res) => {
     return;
   }
 
-  getUser(req.body.token).then((_res) => {
+  try {
+    const db = await dbPromise;
+    const user = await getUser(req.body.token);
     var tag = {
       title: req.body.title,
       content: req.body.content ? req.body.content : "",
       imageUrl: req.body.imageUrl ? req.body.imageUrl : "",
-      userId: _res.id,
+      userId: user.id,
     };
     var sql = `
-        INSERT INTO tags (
-          title,
-          content,
-          imageUrl,
-          userId
-        ) VALUES (?, ?, ?, ?)
-        `;
+    INSERT INTO tags (
+      title,
+      content,
+      imageUrl,
+      userId
+    ) VALUES (?, ?, ?, ?)
+    `;
     var params = [tag.title, tag.content, tag.imageUrl, tag.userId];
-    db.run(sql, params, function (err, result) {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.json({
-        message: "success",
-        data: tag,
-        id: this.lastID,
-      });
+    await db.run(sql, params);
+
+    res.json({
+      message: "success",
+      data: tag,
+      id: this.lastID,
     });
-  });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.put("/save/:id", (req, res, next) => {
-  var tag = {
-    title: req.body.title,
-    content: req.body.content,
-    imageUrl: req.body.imageUrl,
-  };
-  db.run(
-    `UPDATE tags set 
-                title = COALESCE(?,title), 
-                content = COALESCE(?,content),
-                imageUrl= COALESCE(?,imageUrl)
-            WHERE id = ?`,
-    [tag.title, tag.content, tag.imageUrl, req.params.id],
-    function (err, result) {
-      if (err) {
-        res.status(400).json({ error: res.message });
-        return;
-      }
-      res.json({
-        message: "success",
-        data: tag,
-        changes: this.changes,
-      });
-    }
-  );
+router.put("/save/:id", async (req, res, next) => {
+  try {
+    const db = await dbPromise;
+    const tag = {
+      title: req.body.title,
+      content: req.body.content,
+      imageUrl: req.body.imageUrl,
+    };
+
+    const sql = `UPDATE tags set 
+      title = COALESCE(?,title), 
+      content = COALESCE(?,content),
+      imageUrl= COALESCE(?,imageUrl)
+      WHERE id = ?`;
+
+    await db.run(sql, [tag.title, tag.content, tag.imageUrl, req.params.id]);
+    res.json({
+      message: "success",
+      data: tag,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.delete("/:id", (req, res) => {
-  db.run(
-    "DELETE FROM tags WHERE id = ?",
-    req.params.id,
-    function (err, result) {
-      if (err) {
-        res.status(400).json({ error: res.message });
-        return;
-      }
-      res.json({ message: "deleted", changes: this.changes });
-    }
-  );
+router.delete("/:id", async (req, res) => {
+  try {
+    const db = await dbPromise;
+    await db.run("DELETE FROM tags WHERE id = ?", req.params.id);
+    res.json({ message: "deleted" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 module.exports = router;

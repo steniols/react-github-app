@@ -39,7 +39,7 @@ class PostDetailPage extends React.Component {
 
     try {
       await tagsService.delete(tagId);
-      alert("Post excluído com sucesso");
+      alert("Tag excluída com sucesso");
       this.props.history.replace("/tag-list");
     } catch (error) {
       console.log(error);

@@ -1,13 +1,18 @@
-# React github app
+# React Github App
 
-Estudos de aplicação com react e express.
+Github application study with react and express
 
-## API
+## Install API
 
 ```bash
 cd api
 cp .env.sample .env # and check/update configs
 npm install
+```
+
+## Start API
+
+```bash
 npm start
 ```
 
@@ -17,5 +22,10 @@ npm start
 cd client
 cp .env.sample .env # and check/update configs
 npm install
+```
+
+## Start Client
+
+```bash
 npm start
 ```

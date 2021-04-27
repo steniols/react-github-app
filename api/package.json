@@ -4,7 +4,8 @@
 	"description": "backend of a contacts app",
 	"main": "server.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node src/config/dbCreateTables.js && nodemon server.js"
 	},
 	"author": "Andrey Masiero",
 	"license": "ISC",
@@ -18,5 +19,8 @@
 		"node-fetch": "^2.6.1",
 		"sqlite": "^4.0.21",
 		"sqlite3": "^5.0.0"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.7"
 	}
 }

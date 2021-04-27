@@ -13,6 +13,7 @@ class HomePage extends React.Component {
       code: null,
       name: "",
       login: "",
+      showElements: false,
     };
   }
 
@@ -31,6 +32,7 @@ class HomePage extends React.Component {
     githubService.getUser().then((res) => {
       this.setState({ name: res.name });
       this.setState({ login: res.login });
+      this.setState({ showElements: true });
     });
   }
 
@@ -48,7 +50,7 @@ class HomePage extends React.Component {
             Você está conectado como: <b>{this.state.login}</b>
           </p>
         ) : (
-          <p>
+          <p className={!this.state.showElements ? "d-none" : ""}>
             Faça login com sua conta do github no canto superior direito para
             poder adicionar tags em seus repositórios.
           </p>

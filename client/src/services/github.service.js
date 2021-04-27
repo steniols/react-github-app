@@ -47,7 +47,7 @@ const githubService = {
       user: user,
     };
     const result = await axios.post(endpoint, data);
-    const repositories = result.data.userdata.items;
+    const repositories = result.data.repositories;
 
     let repositories_data = await Promise.all(
       repositories.map(async (r) => {

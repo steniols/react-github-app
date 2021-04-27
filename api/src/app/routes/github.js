@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const db = require("../../config/database");
+const dbPromise = require("../../config/database");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -16,32 +16,39 @@ router.get("/", (req, res) => {
   );
 });
 
-router.get("/github-auth-callback", (req, res) => {
-  const code = req.query.code;
-  const body = {
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    code: code,
-  };
-  const opts = { headers: { accept: "application/json" } };
+router.get("/github-auth-callback", async (req, res) => {
+  try {
+    const code = req.query.code;
+    const body = {
+      client_id: process.env.CLIENT_ID,
+      client_secret: process.env.CLIENT_SECRET,
+      code: code,
+    };
+    const opts = { headers: { accept: "application/json" } };
+    const response = await axios.post(
+      `https://github.com/login/oauth/access_token`,
+      body,
+      opts
+    );
+    const token = await response.data.access_token;
+    const user = await getUser(token);
 
-  axios
-    .post(`https://github.com/login/oauth/access_token`, body, opts)
-    .then((res) => res.data.access_token)
-    .then((token) => {
-      getUser(token).then((_res) => {
-        db.run("INSERT OR IGNORE INTO auth (token, username) VALUES (?, ?)", [
-          token,
-          _res.login,
-        ]);
-        res.redirect(
-          `${process.env.APP_URL}?username=${_res.login}&token=${token}`
-        );
-      });
-    });
+    const db = await dbPromise;
+    const inserToken = await db.run(
+      "INSERT OR IGNORE INTO auth (token, username) VALUES (?, ?)",
+      [token, user.login]
+    );
+
+    res.redirect(
+      `${process.env.APP_URL}?username=${user.login}&token=${token}`
+    );
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.post("/github-logout-user", (req, res) => {
+router.post("/github-logout-user", async (req, res) => {
   var errors = [];
   if (!req.body.token) {
     errors.push("Token não informado");
@@ -53,84 +60,112 @@ router.post("/github-logout-user", (req, res) => {
     res.status(400).json({ error: errors.join(",") });
     return;
   }
-  const token = req.body.token;
-  const username = req.body.username;
 
-  db.run("DELETE FROM auth WHERE token = ? AND username = ?", [
-    token,
-    username,
-  ]);
+  try {
+    const token = req.body.token;
+    const username = req.body.username;
+    const db = await dbPromise;
+    await db.run("DELETE FROM auth WHERE token = ? AND username = ?", [
+      token,
+      username,
+    ]);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.get("/github-get-userdata/:token", (req, res) => {
-  const sql = "SELECT * FROM auth WHERE token = ?";
-  db.get(sql, req.params.token, (err, row) => {
-    if (err) {
-      throw err;
-    }
+router.get("/github-get-userdata/:token", async (req, res) => {
+  try {
+    const sql = "SELECT * FROM auth WHERE token = ?";
+    const db = await dbPromise;
+    const user = await db.get(sql, req.params.token);
+    const token = user.token;
 
-    const token = row.token;
-    axios
-      .get("https://api.github.com/user", {
-        headers: { authorization: `token ${token}` },
-      })
-      .then((_res) => {
-        res.json({ userdata: _res.data });
-      })
-      .catch((error) => {
-        res.json({ error: true, error_details: error });
-      });
-  });
+    const response = await axios.get("https://api.github.com/user", {
+      headers: { authorization: `token ${token}` },
+    });
+
+    res.json({ userdata: response.data });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 router.post("/github-repositories", async (req, res) => {
-  const token = req.body.token;
-  const user = req.body.user;
+  try {
+    const token = req.body.token;
+    const user = req.body.user;
+    const response = await axios.get(
+      "https://api.github.com/search/repositories?q=user:" +
+        user +
+        "&id=171121436",
+      {
+        headers: { authorization: `token ${token}` },
+      }
+    );
+    const repositories = response.data.items;
 
-  const _res = await axios.get(
-    "https://api.github.com/search/repositories?q=user:" +
-      user +
-      "&id=171121436",
-    {
-      headers: { authorization: `token ${token}` },
-    }
-  );
+    const sql =
+      "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
+    const db = await dbPromise;
 
-  const repositorios = _res.data.items;
-  res.json({ userdata: _res.data });
+    // let repositories_data = await Promise.all(
+    //   repositories.map(async (r) => {
+    //     try {
+    //       const repo = await db.all(sql, r.id);
+    //       r.tags = repo;
+    //       return r;
+    //     } catch (err) {
+    //       throw err;
+    //     }
+    //   })
+    // );
+
+    // console.log(await repositories_data);
+
+    res.json({ repositories });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.post("/github-repository/:id", (req, res) => {
-  const token = req.body.token;
-  const user = req.body.user;
+router.post("/github-repository/:id", async (req, res) => {
+  try {
+    const token = req.body.token;
+    const user = req.body.user;
+    const response = await axios.get(
+      "https://api.github.com/repos/" + user + "/" + req.params.id,
+      { headers: { authorization: `token ${token}` } }
+    );
 
-  axios
-    .get("https://api.github.com/repos/" + user + "/" + req.params.id, {
-      headers: { authorization: `token ${token}` },
-    })
-    .then((_res) => {
-      const repositoryId = _res.data.id;
-      const { id, name, full_name, description, clone_url } = _res.data;
+    const { id, name, full_name, description, clone_url } = await response.data;
 
-      const repoData = {
-        id,
-        name,
-        full_name,
-        description,
-        clone_url,
-      };
+    const repoData = {
+      id,
+      name,
+      full_name,
+      description,
+      clone_url,
+    };
+    const sql =
+      "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
 
-      const sql =
-        "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
-      db.all(sql, repositoryId, (err, rows) => {
-        repoData.tags = rows ? rows.map((row) => row.tagId) : [];
-        repoData.tagsDesc = rows ? rows.map((row) => row.title) : [];
-        res.json({ userdata: repoData });
-      });
-    });
+    const db = await dbPromise;
+    const tags = await db.all(sql, id);
+
+    repoData.tags = tags ? tags.map((row) => row.tagId) : [];
+    repoData.tagsDesc = tags ? tags.map((row) => row.title) : [];
+    res.json({ userdata: repoData });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
-router.post("/rel-tags/", (req, res) => {
+router.post("/rel-tags/", async (req, res) => {
   var errors = [];
   if (!req.body.repoId) {
     errors.push("Id do repositório não informado");
@@ -141,34 +176,34 @@ router.post("/rel-tags/", (req, res) => {
     return;
   }
 
-  const repoId = req.body.repoId;
-  const tags = req.body.tags;
+  try {
+    const repoId = req.body.repoId;
+    const tags = req.body.tags;
 
-  relData = [];
-  if (tags) {
-    tags.map((tag) => {
-      relData.push([repoId, tag]);
-    });
-  }
-
-  db.run(
-    "DELETE FROM rel_tags_repository WHERE repositoryId = ?",
-    repoId,
-    function (err, result) {
-      if (err) {
-        res.status(400).json({ error: res.message });
-        return;
-      }
+    relData = [];
+    if (tags) {
+      tags.map((tag) => {
+        relData.push([repoId, tag]);
+      });
     }
-  );
 
-  const sql = `INSERT INTO rel_tags_repository (
-        repositoryId,
-        tagId
-      ) VALUES (?, ?)`;
+    const db = await dbPromise;
+    await db.run(
+      "DELETE FROM rel_tags_repository WHERE repositoryId = ?",
+      repoId
+    );
 
-  for (var i = 0; i < relData.length; i++) {
-    db.run(sql, relData[i][0], relData[i][1]);
+    const sql = `INSERT INTO rel_tags_repository (
+      repositoryId,
+      tagId
+    ) VALUES (?, ?)`;
+
+    for (var i = 0; i < relData.length; i++) {
+      await db.run(sql, relData[i][0], relData[i][1]);
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Server Error");
   }
 });
 
