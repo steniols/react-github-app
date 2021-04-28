@@ -3,9 +3,14 @@
 	"version": "1.0.0",
 	"description": "backend of a contacts app",
 	"main": "server.js",
+	"engines": {
+		"node": "15.3.0",
+		"npm": "7.11.0"
+	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node src/config/dbCreateTables.js && nodemon server.js"
+		"start": "node src/config/dbCreateTables.js && node server.js",
+		"heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build"
 	},
 	"author": "Stenio L. de Souza",
 	"license": "ISC",

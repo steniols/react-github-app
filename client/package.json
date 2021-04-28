@@ -42,5 +42,6 @@
       "CLIENT_ID",
       "CLIENT_SECRET"
     ]
-  }
+  },
+  "proxy": "http://localhost:8003"
 }
