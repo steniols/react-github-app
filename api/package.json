@@ -7,7 +7,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node src/config/dbCreateTables.js && nodemon server.js"
 	},
-	"author": "Andrey Masiero",
+	"author": "Stenio L. de Souza",
 	"license": "ISC",
 	"dependencies": {
 		"axios": "^0.21.1",
