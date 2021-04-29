@@ -7,17 +7,21 @@ const githubService = {
   async getUser() {
     const token = localStorage.getItem("tokenGithub");
     if (token) {
-      let endpoint = apiUrl + "/github-get-userdata/" + token;
-      const result = await axios.get(endpoint);
-      if (result.data.userdata?.login) {
-        localStorage.setItem("loginGithub", result.data.userdata.login);
-        localStorage.setItem("nameGithub", result.data.userdata.name);
-        return {
-          login: result.data.userdata.login,
-          name: result.data.userdata.name,
-        };
-      } else {
-        return false;
+      try {
+        const endpoint = apiUrl + "/github-get-userdata/" + token;
+        const result = await axios.get(endpoint);
+        if (await result.data.userdata?.login) {
+          localStorage.setItem("loginGithub", result.data.userdata.login);
+          localStorage.setItem("nameGithub", result.data.userdata.name);
+          return {
+            login: result.data.userdata.login,
+            name: result.data.userdata.name,
+          };
+        } else {
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
     return false;
