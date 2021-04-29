@@ -1,7 +1,7 @@
 import axios from "axios";
 import env from "react-dotenv";
 
-const apiUrl = env.API_URL + "/tags";
+const apiUrl = "/tags";
 
 const tagsService = {
   async list() {
