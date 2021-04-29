@@ -1,7 +1,7 @@
 {
-	"name": "contacts",
+	"name": "github-app-api",
 	"version": "1.0.0",
-	"description": "backend of a contacts app",
+	"description": "",
 	"main": "server.js",
 	"engines": {
 		"node": "15.3.0",

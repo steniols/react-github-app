@@ -1,5 +1,5 @@
 {
-  "name": "github-app",
+  "name": "github-app-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

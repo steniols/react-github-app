@@ -10,6 +10,7 @@ import RepositoryListPage from "./pages/repository-list/repository-list-page";
 import RepositoryDetailPage from "./pages/repository-detail/repository-detail-page";
 
 import githubService from "./services/github.service";
+import env from "react-dotenv";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -36,11 +37,12 @@ class App extends React.Component {
 
   logout() {
     githubService.clearLoggedUser();
-    window.location = "/teste";
+    window.location = "/";
   }
 
   redirectGitHubLogin() {
-    window.location = "/github";
+    const api_url = env.API_URL ? `${env.API_URL}/github` : "/github";
+    window.location = api_url;
   }
 
   loadUserData() {

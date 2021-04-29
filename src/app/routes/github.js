@@ -40,7 +40,9 @@ router.get("/github-auth-callback", async (req, res) => {
     );
 
     res.redirect(
-      `${process.env.APP_URL}?username=${user.login}&token=${token}`
+      `${
+        process.env.NODE_ENV == "production" ? "/" : process.env.APP_URL
+      }?username=${user.login}&token=${token}`
     );
   } catch (error) {
     console.log(error.message);

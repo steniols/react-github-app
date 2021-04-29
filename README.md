@@ -5,7 +5,7 @@ Github application study with react and express
 ## Install API
 
 ```bash
-cd api
+
 cp .env.sample .env # and check/update configs
 npm install
 ```

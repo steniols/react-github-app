@@ -1,6 +1,7 @@
 import axios from "axios";
+import env from "react-dotenv";
 
-const apiUrl = "/github";
+const apiUrl = env.API_URL ? `${env.API_URL}/github` : "/github";
 
 const githubService = {
   async getUser() {
