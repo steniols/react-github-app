@@ -53,7 +53,7 @@ class PostDetailPage extends React.Component {
 
     return (
       <div className="container">
-        <PageTop title={"Tag"} desc={"Detalhes do tag"}>
+        <PageTop title={"Tag"} desc={"Detalhes da tag"}>
           <button
             className="btn btn-light"
             onClick={() => this.props.history.goBack()}

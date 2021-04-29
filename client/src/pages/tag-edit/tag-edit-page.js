@@ -78,9 +78,9 @@ class PostEditPage extends React.Component {
       return <Redirect to={this.state.redirectTo} />;
     }
 
-    let title = this.state.id ? "Editar Post" : "Novo Post";
+    let title = this.state.id ? "Editar Tag" : "Nova Tag";
     let desc = this.state.id
-      ? "Editar informações de um tag"
+      ? "Editar informações de uma tag"
       : "Formulário para a criação de tags";
 
     return (

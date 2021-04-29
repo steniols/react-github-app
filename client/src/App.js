@@ -13,7 +13,6 @@ import githubService from "./services/github.service";
 import env from "react-dotenv";
 
 import "react-toastify/dist/ReactToastify.css";
-
 import { toast } from "react-toastify";
 toast.configure();
 
