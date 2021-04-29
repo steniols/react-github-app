@@ -66,10 +66,10 @@ class PostEditPage extends React.Component {
         toast.success("A tag foi editada com sucesso!");
       } else {
         await tagsService.create(data);
-        toast.success("A tag foi criado com sucesso!");
+        toast.success("A tag foi criada com sucesso!");
       }
     } catch (error) {
-      toast.error("Erro ao criar tag!");
+      toast.error("Erro ao criar a tag!");
     }
   }
 
