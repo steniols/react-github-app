@@ -13,6 +13,7 @@ class PostListPage extends React.Component {
     this.state = {
       tags: [],
       redirectTo: null,
+      loader: true,
     };
   }
 
@@ -27,9 +28,19 @@ class PostListPage extends React.Component {
   async loadTags() {
     try {
       let res = await tagsService.list();
-      this.setState({ tags: res.data.data });
+      this.setState({ tags: res.data.data, loader: false });
     } catch (error) {
       toast.error("Não foi possível listar os tags.");
+    }
+  }
+
+  loader() {
+    if (this.state.loader) {
+      return <Loader></Loader>;
+    } else {
+      return this.state.tags.length <= 0 ? (
+        <p>Nenhum registro encontrado</p>
+      ) : null;
     }
   }
 
@@ -40,7 +51,7 @@ class PostListPage extends React.Component {
 
     return (
       <div className="container">
-        <PageTop title={"Tags"} desc={"Listagem dos tags"}>
+        <PageTop title={"Tags"} desc={"Listagem de tags"}>
           <button
             className="btn btn-primary"
             onClick={() => this.props.history.push("/tag-add")}
@@ -49,7 +60,7 @@ class PostListPage extends React.Component {
           </button>
         </PageTop>
 
-        {this.state.tags.length <= 0 ? <Loader /> : null}
+        {this.loader()}
 
         {this.state.tags.map((tag) => (
           <Link to={"/tag-detail/" + tag.id} key={tag.id}>

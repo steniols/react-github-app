@@ -12,6 +12,7 @@ class RepositoryPage extends React.Component {
     this.state = {
       repos: [],
       redirectTo: null,
+      loader: true,
     };
   }
 
@@ -23,10 +24,20 @@ class RepositoryPage extends React.Component {
       );
   }
 
+  loader() {
+    if (this.state.loader) {
+      return <Loader></Loader>;
+    } else {
+      return this.state.repos.length <= 0 ? (
+        <p>Nenhum registro encontrado</p>
+      ) : null;
+    }
+  }
+
   async loadRepos() {
     try {
       let res = await githubService.getRepos();
-      this.setState({ repos: res });
+      this.setState({ repos: res, loader: false });
     } catch (error) {
       toast.error("Não foi possível listar os repositórios.");
     }
@@ -44,7 +55,7 @@ class RepositoryPage extends React.Component {
           desc={"Lista dos repositórios"}
         ></PageTop>
 
-        {this.state.repos.length <= 0 ? <Loader /> : null}
+        {this.loader()}
 
         {this.state.repos.map((repo) => (
           <Link to={"/repository-detail/" + repo.name} key={repo.id}>
