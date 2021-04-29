@@ -1,6 +1,6 @@
 # React Github App
 
-Github application study with react and express
+Github application study with express, react and sqlite
 
 ## Install API
 
