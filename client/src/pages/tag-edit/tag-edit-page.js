@@ -86,18 +86,17 @@ class PostEditPage extends React.Component {
     return (
       <div className="container">
         <PageTop title={title} desc={desc}>
-          <button
-            className="btn btn-light"
-            onClick={() => this.props.history.replace("/tag-list")}
-          >
-            Cancelar
-          </button>
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => this.sendPost()}
-          >
-            Salvar
-          </button>
+          <div className="btn-group" role="group" aria-label="Basic example">
+            <button
+              className="btn btn-light"
+              onClick={() => this.props.history.replace("/tag-list")}
+            >
+              Cancelar
+            </button>
+            <button className="btn btn-primary" onClick={() => this.sendPost()}>
+              Salvar
+            </button>
+          </div>
         </PageTop>
 
         <form onSubmit={(e) => e.preventDefault()}>
