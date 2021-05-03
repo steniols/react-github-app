@@ -99,10 +99,16 @@ router.post("/github-repositories", async (req, res) => {
   try {
     const token = req.body.token;
     const user = req.body.user;
+    const search = req.body.search;
+
+    let query = `q=user:${user}`;
+
+    if (search) {
+      query += ` in:name,description+${search}`;
+    }
+
     const response = await axios.get(
-      "https://api.github.com/search/repositories?q=user:" +
-        user +
-        "&id=171121436",
+      `https://api.github.com/search/repositories?${query}`,
       {
         headers: { authorization: `token ${token}` },
       }
@@ -140,19 +146,24 @@ router.post("/github-repository/:id", async (req, res) => {
       "https://api.github.com/repos/" + user + "/" + req.params.id,
       { headers: { authorization: `token ${token}` } }
     );
-
-    const { id, name, full_name, description, clone_url } = await response.data;
-
+    const {
+      id,
+      name,
+      full_name,
+      description,
+      clone_url,
+      html_url,
+    } = await response.data;
     const repoData = {
       id,
       name,
       full_name,
       description,
       clone_url,
+      html_url,
     };
     const sql =
       "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
-
     const db = await dbPromise;
     const tags = await db.all(sql, id);
 

@@ -4,6 +4,7 @@ import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
+import { toast } from "react-toastify";
 
 class PostDetailPage extends React.Component {
   constructor(props) {
@@ -29,20 +30,20 @@ class PostDetailPage extends React.Component {
       this.setState({ tag: res.data.data[0] });
     } catch (error) {
       console.log(error);
-      alert("Não foi possível carregar tag.");
+      toast.error("Não foi possível carregar a tag.");
     }
   }
 
   async deleteTag(tagId) {
-    if (!window.confirm("Deseja realmente excluir este tag?")) return;
+    if (!window.confirm("Deseja realmente excluir esta tag?")) return;
 
     try {
       await tagsService.delete(tagId);
-      alert("Tag excluída com sucesso");
+      toast.success("A tag foi excluída com sucesso");
       this.props.history.replace("/tag-list");
     } catch (error) {
       console.log(error);
-      alert("Não foi excluir o tag.");
+      toast.error("Não foi possível excluir a tag.");
     }
   }
 

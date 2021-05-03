@@ -7,17 +7,21 @@ const githubService = {
   async getUser() {
     const token = localStorage.getItem("tokenGithub");
     if (token) {
-      let endpoint = apiUrl + "/github-get-userdata/" + token;
-      const result = await axios.get(endpoint);
-      if (result.data.userdata?.login) {
-        localStorage.setItem("loginGithub", result.data.userdata.login);
-        localStorage.setItem("nameGithub", result.data.userdata.name);
-        return {
-          login: result.data.userdata.login,
-          name: result.data.userdata.name,
-        };
-      } else {
-        return false;
+      try {
+        const endpoint = apiUrl + "/github-get-userdata/" + token;
+        const result = await axios.get(endpoint);
+        if (await result.data.userdata?.login) {
+          localStorage.setItem("loginGithub", result.data.userdata.login);
+          localStorage.setItem("nameGithub", result.data.userdata.name);
+          return {
+            login: result.data.userdata.login,
+            name: result.data.userdata.name,
+          };
+        } else {
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
     return false;
@@ -38,18 +42,25 @@ const githubService = {
     return result;
   },
 
-  async getRepos() {
-    const token = localStorage.getItem("tokenGithub");
-    const user = localStorage.getItem("loginGithub");
-    let endpoint = apiUrl + "/github-repositories";
-    const data = {
-      token: token,
-      user: user,
-    };
-    const result = await axios.post(endpoint, data);
-    const repositories = result.data.repositories;
+  async getRepos(search = false) {
+    try {
+      const token = localStorage.getItem("tokenGithub");
+      const user = localStorage.getItem("loginGithub");
+      let endpoint = apiUrl + "/github-repositories";
+      const data = {
+        token: token,
+        user: user,
+        search: search,
+      };
+      const result = await axios.post(endpoint, data);
+      const repositories = await result.data.repositories;
+      console.log("repos return", repositories);
 
-    return repositories;
+      return repositories;
+    } catch (err) {
+      console.log(err);
+      throw new Error("Ocorreu um erro ao resgatar os repositórios.");
+    }
   },
 
   async getRepo(repoId) {
