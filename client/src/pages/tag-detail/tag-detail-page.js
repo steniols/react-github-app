@@ -85,14 +85,14 @@ class PostDetailPage extends React.Component {
             <div className="btn-group" role="group" aria-label="Basic example">
               <button
                 type="button"
-                className="btn btn-sm btn-outline-danger"
+                className="btn btn-sm btn-danger"
                 onClick={() => this.deleteTag(this.state.tag.id)}
               >
                 Excluir
               </button>
               <button
                 type="button"
-                className="btn btn-sm btn-outline-primary"
+                className="btn btn-sm btn-primary"
                 onClick={() =>
                   this.props.history.push("/tag-edit/" + this.state.tag.id)
                 }
