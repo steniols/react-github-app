@@ -17,15 +17,13 @@ $enable-gradients:false;
 $spacer:1rem;
 $border-width:1px;
 $btn-border-radius:.25rem;
+$title: #333;
+$p: #666;
+$border: #bfbfbf;
 
 
-// Add SASS theme customizations here..
-// Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';
 
-
-
-/* Estilo personalizado */
 
 /* Menu */
 
@@ -41,16 +39,49 @@ $btn-border-radius:.25rem;
 }
 
 .nav-user__info h4 {
-    color: #333;
+    color: $light;
     font-size: 16px;
     font-weight: bold;
     margin: 0;
 }
 
 .nav-user__info p {
-    color: #666;
+    color: $light;
     font-size: 12px;
     margin: 0;
+}
+
+/* Page top */
+
+.page-top {
+    border-bottom: 1px solid $border;
+    padding: 16px 0px;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.page-top__title {
+    display: flex;
+    flex-direction: column;
+}
+
+.page-top__title h2 {
+    color: $title;
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.page-top__title p {
+    color: $p;
+    font-size: 14px;
+    margin: 0;
+}
+
+.page-top__aside {
+    margin-left: auto;
 }
 
 /* Details page */
@@ -64,7 +95,7 @@ $btn-border-radius:.25rem;
 }
 
 .info h4 {
-    color: #333;
+    color: $title;
     font-size: 18px;
     font-weight: bold;
     margin: 0;
@@ -72,7 +103,7 @@ $btn-border-radius:.25rem;
 }
 
 .info p {
-    color: #666;
+    color: $p;
     font-size: 14px;
     margin: 0;
 }
@@ -87,7 +118,6 @@ a:link {
 .card {
     display: flex;
     flex-direction: row;
-    border: 1px solid #DDDDDD;
     border-radius: 4px;
     overflow: hidden;
     margin-bottom: 16px;
@@ -98,7 +128,7 @@ a:link {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f9f9f9;
+    background-color: $light;
     overflow: hidden;
     width: 20%;
     height: 100px;
@@ -110,14 +140,14 @@ a:link {
 }
 
 .card-body h4 {
-    color: #333;
+    color: $title;
     font-size: 18px;
     font-weight: bold;
     margin: 0;
 }
 
 .card-body p {
-    color: #666;
+    color: $p;
     font-size: 14px !important;
     margin: 0;
 }
@@ -139,8 +169,8 @@ a:link {
 }
 
 .Toastify__toast--default {
-    background: #fff;
-    color: #aaa;
+    background: $light;
+    color: $secondary;
 }
 
 .Toastify__toast--info {
@@ -157,4 +187,17 @@ a:link {
 
 .Toastify__toast--error {
     background: $danger;
+}
+
+body {
+    background: $secondary;
+}
+
+.navbar-light {
+    background-color: $primary !important;
+}
+
+.navbar-light p,
+.navbar-light a {
+    color: $light !important
 }

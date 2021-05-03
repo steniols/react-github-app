@@ -91,7 +91,7 @@ class App extends React.Component {
                     <p>{this.state.login}</p>
                   </div>
                   <button
-                    className="btn btn-outline-dark"
+                    className="btn btn-dark"
                     onClick={(e) => this.logout()}
                   >
                     Sair
