@@ -42,18 +42,25 @@ const githubService = {
     return result;
   },
 
-  async getRepos() {
-    const token = localStorage.getItem("tokenGithub");
-    const user = localStorage.getItem("loginGithub");
-    let endpoint = apiUrl + "/github-repositories";
-    const data = {
-      token: token,
-      user: user,
-    };
-    const result = await axios.post(endpoint, data);
-    const repositories = result.data.repositories;
+  async getRepos(search = false) {
+    try {
+      const token = localStorage.getItem("tokenGithub");
+      const user = localStorage.getItem("loginGithub");
+      let endpoint = apiUrl + "/github-repositories";
+      const data = {
+        token: token,
+        user: user,
+        search: search,
+      };
+      const result = await axios.post(endpoint, data);
+      const repositories = await result.data.repositories;
+      console.log("repos return", repositories);
 
-    return repositories;
+      return repositories;
+    } catch (err) {
+      console.log(err);
+      throw new Error("Ocorreu um erro ao resgatar os repositórios.");
+    }
   },
 
   async getRepo(repoId) {

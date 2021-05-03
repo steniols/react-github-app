@@ -1,18 +1,19 @@
 import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
-import { toast } from "react-toastify";
 
 class RepositoryPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: [],
       redirectTo: null,
+      repos: [],
       loader: true,
+      searchTerm: "",
     };
   }
 
@@ -22,6 +23,28 @@ class RepositoryPage extends React.Component {
       .then((res) =>
         !res ? this.setState({ redirectTo: "/" }) : this.loadRepos()
       );
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.searchTerm !== prevState.searchTerm) {
+      let filteredRepos = [];
+      this.setState({ repos: [], loader: true });
+      try {
+        filteredRepos = await githubService.getRepos(this.state.searchTerm);
+      } catch (error) {
+        console.log(error);
+      }
+      this.setState({ repos: filteredRepos, loader: false });
+    }
+  }
+
+  async loadRepos(search = false) {
+    try {
+      let res = await githubService.getRepos(search);
+      this.setState({ repos: res, loader: false });
+    } catch (error) {
+      toast.error("Não foi possível listar os repositórios.");
+    }
   }
 
   loader() {
@@ -34,15 +57,6 @@ class RepositoryPage extends React.Component {
     }
   }
 
-  async loadRepos() {
-    try {
-      let res = await githubService.getRepos();
-      this.setState({ repos: res, loader: false });
-    } catch (error) {
-      toast.error("Não foi possível listar os repositórios.");
-    }
-  }
-
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
@@ -50,10 +64,23 @@ class RepositoryPage extends React.Component {
 
     return (
       <div className="container">
-        <PageTop
-          title={"Repositórios"}
-          desc={"Lista dos repositórios"}
-        ></PageTop>
+        <PageTop title={"Repositórios"} desc={"Lista dos repositórios"} />
+
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control border-right-0"
+            placeholder="Procurar repositórios..."
+            onChange={(event) =>
+              this.setState({ searchTerm: event.target.value })
+            }
+          />
+          <span className="input-group-append bg-white border-left-0">
+            <span className="input-group-text bg-transparent">
+              <i className="fa fa-search"></i>
+            </span>
+          </span>
+        </div>
 
         {this.loader()}
 

@@ -99,7 +99,9 @@ class PostEditPage extends React.Component {
 
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
-            <label htmlFor="title">Título</label>
+            <label htmlFor="title">
+              Título <span>*</span>
+            </label>
             <input
               type="text"
               className="form-control"
@@ -109,7 +111,9 @@ class PostEditPage extends React.Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="content">Conteúdo</label>
+            <label htmlFor="content">
+              Conteúdo <span>*</span>
+            </label>
             <textarea
               type="text"
               className="form-control"
@@ -121,7 +125,9 @@ class PostEditPage extends React.Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="batata">Url da imagem</label>
+            <label htmlFor="batata">
+              Url da imagem <span>*</span>
+            </label>
             <input
               type="text"
               className="form-control"
