@@ -102,7 +102,7 @@ class App extends React.Component {
               {!this.state.login && this.state.showElements ? (
                 <>
                   <button
-                    className="btn btn-outline-dark"
+                    className="btn btn-dark"
                     onClick={(e) => this.redirectGitHubLogin()}
                   >
                     Login com o GitHub

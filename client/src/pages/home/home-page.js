@@ -51,8 +51,7 @@ class HomePage extends React.Component {
           </p>
         ) : (
           <p className={!this.state.showElements ? "d-none" : ""}>
-            Faça login com sua conta do github no canto superior direito para
-            poder adicionar tags em seus repositórios.
+            Faça login com sua conta do github no canto superior direito.
           </p>
         )}
       </div>
