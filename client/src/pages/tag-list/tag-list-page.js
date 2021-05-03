@@ -65,12 +65,14 @@ class PostListPage extends React.Component {
         {this.state.tags.map((tag) => (
           <Link to={"/tag-detail/" + tag.id} key={tag.id}>
             <div className="card">
-              <div className="card-img">
-                <img src={tag.imageUrl} alt="" />
-              </div>
-              <div className="card-text">
-                <h4>{tag.title}</h4>
-                <p>{tag.content}</p>
+              <div className="card-horizontal">
+                <div className="img-square-wrapper card-img">
+                  <img src={tag.imageUrl} alt="" />
+                </div>
+                <div className="card-body">
+                  <h4 className="card-title">{tag.title}</h4>
+                  <p className="card-text">{tag.content}</p>
+                </div>
               </div>
             </div>
           </Link>

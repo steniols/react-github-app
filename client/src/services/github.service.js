@@ -54,8 +54,6 @@ const githubService = {
       };
       const result = await axios.post(endpoint, data);
       const repositories = await result.data.repositories;
-      console.log("repos return", repositories);
-
       return repositories;
     } catch (err) {
       console.log(err);
