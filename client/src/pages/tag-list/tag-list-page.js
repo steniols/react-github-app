@@ -53,7 +53,7 @@ class PostListPage extends React.Component {
       <div className="container">
         <PageTop title={"Tags"} desc={"Listagem de tags"}>
           <button
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
             onClick={() => this.props.history.push("/tag-add")}
           >
             Adicionar
