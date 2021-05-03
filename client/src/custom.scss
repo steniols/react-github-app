@@ -1,0 +1,160 @@
+// Override default variables before the import
+// $body-bg: #000;
+/*! `Custom` Bootstrap 4 theme */
+@import url(https://fonts.googleapis.com/css?family=Comfortaa:200,300,400,700);
+$headings-font-family:Comfortaa;
+
+$enable-grid-classes:false;
+$primary:#07689F;
+$secondary:#C9D6DF;
+$success:#11D3BC;
+$danger:#F67280;
+$info:#A2D5F2;
+$warning:#FF7E67;
+$light:#FAFAFA;
+$dark:#4e4e4e;
+$enable-gradients:false;
+$spacer:1rem;
+$border-width:1px;
+$btn-border-radius:.25rem;
+
+
+// Add SASS theme customizations here..
+// Import Bootstrap and its default variables
+@import '~bootstrap/scss/bootstrap.scss';
+
+
+
+/* Estilo personalizado */
+
+/* Menu */
+
+.nav-user {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.nav-user__info {
+    margin-right: 15px;
+}
+
+.nav-user__info h4 {
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.nav-user__info p {
+    color: #666;
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Details page */
+
+.img {
+    width: 100%;
+}
+
+.info {
+    margin-bottom: 24px;
+}
+
+.info h4 {
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+    margin-bottom: 4px;
+}
+
+.info p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* List */
+
+a:link {
+    text-decoration: none;
+    color: unset
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
+.card-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    overflow: hidden;
+    width: 20%;
+    height: 100px;
+    margin-right: 16px;
+}
+
+.card-img img {
+    width: 100%;
+}
+
+.card-body h4 {
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.card-body p {
+    color: #666;
+    font-size: 14px !important;
+    margin: 0;
+}
+
+.badge {
+    margin-right: 5px;
+    margin-top: 5px;
+    padding: 7px !important;
+}
+
+.card-horizontal {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+
+.Toastify__toast-container {
+    width: 320px;
+}
+
+.Toastify__toast--default {
+    background: #fff;
+    color: #aaa;
+}
+
+.Toastify__toast--info {
+    background: $info;
+}
+
+.Toastify__toast--success {
+    background: $success;
+}
+
+.Toastify__toast--warning {
+    background: $warning;
+}
+
+.Toastify__toast--error {
+    background: $danger;
+}

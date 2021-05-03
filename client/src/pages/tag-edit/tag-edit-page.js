@@ -92,7 +92,10 @@ class PostEditPage extends React.Component {
           >
             Cancelar
           </button>
-          <button className="btn btn-primary" onClick={() => this.sendPost()}>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => this.sendPost()}
+          >
             Salvar
           </button>
         </PageTop>

@@ -87,7 +87,7 @@ class RepositoryPage extends React.Component {
         {this.state.repos.map((repo) => (
           <Link to={"/repository-detail/" + repo.name} key={repo.id}>
             <div className="card">
-              <div className="card-text">
+              <div className="card-body">
                 <h4>{repo.name}</h4>
                 <p className="mt-1">{repo.description}</p>
                 <p>
