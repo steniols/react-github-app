@@ -75,7 +75,7 @@ class RepositoryPage extends React.Component {
               this.setState({ searchTerm: event.target.value })
             }
           />
-          <span className="input-group-append bg-white border-left-0">
+          <span className="input-group-append bg-white border-left-0 border-right-4">
             <span className="input-group-text bg-transparent">
               <i className="fa fa-search"></i>
             </span>

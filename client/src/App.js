@@ -54,79 +54,100 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-          <Link to="/" className="navbar-brand">
-            Github App
-          </Link>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarMenu"
-            aria-controls="navbarMenu"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarMenu">
-            <div className="navbar-nav">
-              {this.state.login ? (
-                <>
-                  <Link to="/" className="nav-item nav-link">
-                    Home
-                  </Link>
-                  <Link to="/repository-list" className="nav-item nav-link">
-                    Repositórios
-                  </Link>
-                  <Link to="/tag-list" className="nav-item nav-link">
-                    Tags
-                  </Link>
-                </>
-              ) : null}
-            </div>
-            <div className="nav-user">
-              {this.state.login ? (
-                <>
-                  <div className="nav-user__info">
-                    <h4>{this.state.name}</h4>
-                    <p>{this.state.login}</p>
-                  </div>
-                  <button
-                    className="btn btn-dark"
-                    onClick={(e) => this.logout()}
-                  >
-                    Sair
-                  </button>
-                </>
-              ) : null}
+        <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+          <div class="container">
+            <Link to="/" className="navbar-brand">
+              Github App
+            </Link>
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarMenu"
+              aria-controls="navbarMenu"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarMenu">
+              <div className="navbar-nav">
+                {this.state.login ? (
+                  <>
+                    <Link to="/" className="nav-item nav-link">
+                      Home
+                    </Link>
+                    <Link to="/repository-list" className="nav-item nav-link">
+                      Repositórios
+                    </Link>
+                    <Link to="/tag-list" className="nav-item nav-link">
+                      Tags
+                    </Link>
+                  </>
+                ) : null}
+              </div>
+              <div className="nav-user">
+                {this.state.login ? (
+                  <>
+                    <div className="nav-user__info">
+                      <h4>{this.state.name}</h4>
+                      <p>{this.state.login}</p>
+                    </div>
+                    <button
+                      className="btn btn-dark"
+                      onClick={(e) => this.logout()}
+                    >
+                      Sair
+                    </button>
+                  </>
+                ) : null}
 
-              {!this.state.login && this.state.showElements ? (
-                <>
-                  <button
-                    className="btn btn-primary"
-                    onClick={(e) => this.redirectGitHubLogin()}
-                  >
-                    Login com o GitHub
-                  </button>
-                </>
-              ) : null}
+                {!this.state.login && this.state.showElements ? (
+                  <>
+                    <button
+                      className="btn btn-primary"
+                      onClick={(e) => this.redirectGitHubLogin()}
+                    >
+                      Login com o GitHub
+                    </button>
+                  </>
+                ) : null}
+              </div>
             </div>
           </div>
         </nav>
-        <Route path="/" exact={true} component={HomePage} />
-        <Route path="/tag-list" exact={true} component={TagListPage} />
-        <Route path="/tag-detail/:id" exact={true} component={TagDetailPage} />
-        <Route path="/tag-add" exact={true} component={TagEditPage} />
-        <Route path="/tag-edit/:id" exact={true} component={TagEditPage} />
-        <Route
-          path="/repository-list"
-          exact={true}
-          component={RepositoryListPage}
-        />
-        <Route
-          path="/repository-detail/:id"
-          exact={true}
-          component={RepositoryDetailPage}
-        />
+        <main>
+          <Route path="/" exact={true} component={HomePage} />
+          <Route path="/tag-list" exact={true} component={TagListPage} />
+          <Route
+            path="/tag-detail/:id"
+            exact={true}
+            component={TagDetailPage}
+          />
+          <Route path="/tag-add" exact={true} component={TagEditPage} />
+          <Route path="/tag-edit/:id" exact={true} component={TagEditPage} />
+          <Route
+            path="/repository-list"
+            exact={true}
+            component={RepositoryListPage}
+          />
+          <Route
+            path="/repository-detail/:id"
+            exact={true}
+            component={RepositoryDetailPage}
+          />
+        </main>
+        <footer class="navbar navbar-default navbar-static-bottom mt-auto">
+          <div class="container">
+            <p class="navbar-text navbar-left">
+              <i>&copy; Github App</i> by{" "}
+              <Link
+                to={{ pathname: "https://steniols.github.io/" }}
+                target="_blank"
+              >
+                steniols
+              </Link>
+            </p>
+          </div>
+        </footer>
       </BrowserRouter>
     );
   }
