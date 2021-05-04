@@ -98,10 +98,10 @@ router.get("/github-get-userdata/:token", async (req, res) => {
 router.post("/github-repositories", async (req, res) => {
   try {
     const token = req.body.token;
-    const user = req.body.user;
+    const userName = req.body.user;
     const search = req.body.search;
 
-    let query = `q=user:${user}`;
+    let query = `q=user:${userName}`;
 
     if (search) {
       query += ` in:name,description+${search}`;
@@ -113,23 +113,39 @@ router.post("/github-repositories", async (req, res) => {
         headers: { authorization: `token ${token}` },
       }
     );
-    const repositories = response.data.items;
 
-    const sql =
-      "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
+    const insertRepositoriesData = `INSERT OR IGNORE INTO repositories 
+      (repositoryId, name, fullName, description, cloneUrl, htmlUrl, userId) 
+      VALUES (?, ?, ?, ? , ?, ?, ?)`;
+
+    const repositoriesResponse = response.data.items;
+
     const db = await dbPromise;
-
     await Promise.all(
-      repositories.map(async (r) => {
-        try {
-          const repo = await db.all(sql, r.id);
-          r.tags = repo;
-          return r;
-        } catch (err) {
-          throw err;
-        }
+      repositoriesResponse.map(async (r) => {
+        await db.run(insertRepositoriesData, [
+          r.id,
+          r.name,
+          r.full_name,
+          r.description,
+          r.clone_url,
+          r.html_url,
+          r.owner.id,
+        ]);
       })
     );
+
+    const user = await getUser(token);
+
+    const getAllrepositoriesSql = `SELECT repositories.*, GROUP_CONCAT(tags.title) AS tagsDesc,
+    GROUP_CONCAT(tags.id) AS tagsIds
+    FROM repositories
+    LEFT JOIN rel_tags_repository ON repositories.repositoryId = rel_tags_repository.repositoryId
+    LEFT JOIN tags ON rel_tags_repository.tagId = tags.id
+    WHERE repositories.userId = ?
+    GROUP BY repositories.id`;
+
+    const repositories = await db.all(getAllrepositoriesSql, user.id);
 
     res.json({ repositories });
   } catch (error) {
@@ -169,6 +185,7 @@ router.post("/github-repository/:id", async (req, res) => {
 
     repoData.tags = tags ? tags.map((row) => row.tagId) : [];
     repoData.tagsDesc = tags ? tags.map((row) => row.title) : [];
+
     res.json({ userdata: repoData });
   } catch (error) {
     console.log(error.message);

@@ -91,10 +91,10 @@ class RepositoryPage extends React.Component {
                 <h4>{repo.name}</h4>
                 <p className="mt-1">{repo.description}</p>
                 <p>
-                  {repo.tags
-                    ? repo.tags.map((r) => (
-                        <span className="badge badge-primary" key={r.id}>
-                          {r.title}
+                  {repo.tagsDesc
+                    ? repo.tagsDesc.split(",").map((r) => (
+                        <span className="badge badge-primary" key={r}>
+                          {r}
                         </span>
                       ))
                     : null}

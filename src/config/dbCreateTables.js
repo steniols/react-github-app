@@ -19,6 +19,20 @@ if (!dbExists) {
   const DROP_AUTH_SCHEMA = `
   	DROP TABLE IF EXISTS auth;
   `;
+
+  const REPOSITORIES_SCHEMA = `
+  	CREATE TABLE IF NOT EXISTS repositories (
+  		id INTEGER PRIMARY KEY AUTOINCREMENT,
+  		repositoryId INTEGER UNIQUE,
+  		name TEXT NOT NULL,
+  		fullName TEXT,
+  		description TEXT,
+  		cloneUrl TEXT,
+  		htmlUrl TEXT,
+      userId INTEGER	
+    )
+  `;
+
   const TAGS_SCHEMA = `
   	CREATE TABLE IF NOT EXISTS tags (
   		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,6 +66,7 @@ if (!dbExists) {
     db.run(AUTH_SCHEMA);
     db.run(DROP_TAGS_SCHEMA);
     db.run(TAGS_SCHEMA);
+    db.run(REPOSITORIES_SCHEMA);
     db.run(REL_SCHEMA);
     try {
       db.run(INSERT_TAG, [

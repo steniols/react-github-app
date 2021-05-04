@@ -55,7 +55,7 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-          <div class="container">
+          <div className="container">
             <Link to="/" className="navbar-brand">
               Github App
             </Link>
@@ -135,9 +135,9 @@ class App extends React.Component {
             component={RepositoryDetailPage}
           />
         </main>
-        <footer class="navbar navbar-default navbar-static-bottom mt-auto">
-          <div class="container">
-            <p class="navbar-text navbar-left">
+        <footer className="navbar navbar-default navbar-static-bottom mt-auto">
+          <div className="container">
+            <p className="navbar-text navbar-left">
               <i>&copy; Github App</i> by{" "}
               <Link
                 to={{ pathname: "https://steniols.github.io/" }}
