@@ -80,18 +80,18 @@ class RepositoryDetailPage extends React.Component {
           <Loader />
         ) : (
           <div className="row info">
-            <div className="col-6">
-              <div className="repository-info mb-4">
+            <div className="col-6 bg-light rounded-left">
+              <div className="repository-info mt-4 ml-2">
                 <h4>Título</h4>
                 <p>{this.state.repository?.name}</p>
               </div>
-              <div className="repository-info mb-4">
+              <div className="repository-info mt-4 ml-2">
                 <h4>Descrição</h4>
                 <p>{this.state.repository?.description}</p>
               </div>
 
               {this.state.tags ? (
-                <form>
+                <form className="mt-4 ml-2">
                   <div className="form-group">
                     <label htmlFor="">
                       <h4>Relacionar Tags</h4>
@@ -108,21 +108,21 @@ class RepositoryDetailPage extends React.Component {
                 </form>
               ) : null}
             </div>
-            <div className="col-6">
-              <div className="repository-info mb-4">
+            <div className="col-6 bg-light rounded-right">
+              <div className="repository-info mt-4 ml-2">
                 <h4>Url</h4>
                 <p>
                   <Link
-                    to={{ pathname: this.state.repository?.html_url }}
+                    to={{ pathname: this.state.repository?.htmlUrl }}
                     target="_blank"
                   >
-                    {this.state.repository?.html_url}
+                    {this.state.repository?.htmlUrl}
                   </Link>
                 </p>
               </div>
-              <div className="repository-info mb-4">
+              <div className="repository-info mt-4">
                 <h4>Clone URL</h4>
-                <p>{this.state.repository?.clone_url}</p>
+                <p>git clone {this.state.repository?.cloneUrl}</p>
               </div>
             </div>
           </div>

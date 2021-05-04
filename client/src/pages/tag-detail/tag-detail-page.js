@@ -65,12 +65,16 @@ class PostDetailPage extends React.Component {
 
         {!this.state.tag ? <Loader /> : null}
 
-        <div className="row">
+        <div className="row  bg-light">
           <div className="col-6">
-            <img className="img" src={this.state?.tag?.imageUrl} alt="" />
+            <img
+              className="img mt-3 mb-3"
+              src={this.state?.tag?.imageUrl}
+              alt=""
+            />
           </div>
           <div className="col-6">
-            <div className="info">
+            <div className="info mt-4">
               <h4>ID</h4>
               <p>{this.state.tag?.id}</p>
             </div>
@@ -82,7 +86,11 @@ class PostDetailPage extends React.Component {
               <h4>Conteúdo</h4>
               <p>{this.state.tag?.content}</p>
             </div>
-            <div className="btn-group" role="group" aria-label="Basic example">
+            <div
+              className="btn-group mb-3"
+              role="group"
+              aria-label="Basic example"
+            >
               <button
                 type="button"
                 className="btn btn-sm btn-danger"

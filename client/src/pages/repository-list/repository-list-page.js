@@ -75,7 +75,7 @@ class RepositoryPage extends React.Component {
               this.setState({ searchTerm: event.target.value })
             }
           />
-          <span className="input-group-append bg-white border-left-0">
+          <span className="input-group-append bg-white border-left-0 border-right-4">
             <span className="input-group-text bg-transparent">
               <i className="fa fa-search"></i>
             </span>
@@ -91,10 +91,10 @@ class RepositoryPage extends React.Component {
                 <h4>{repo.name}</h4>
                 <p className="mt-1">{repo.description}</p>
                 <p>
-                  {repo.tags
-                    ? repo.tags.map((r) => (
-                        <span className="badge badge-primary" key={r.id}>
-                          {r.title}
+                  {repo.tagsDesc
+                    ? repo.tagsDesc.split(",").map((r) => (
+                        <span className="badge badge-primary" key={r}>
+                          {r}
                         </span>
                       ))
                     : null}
