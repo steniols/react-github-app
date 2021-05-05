@@ -8,14 +8,12 @@
 		"npm": "7.11.0"
 	},
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "nodemon server.js",
-		"install-project": "(dropdb --if-exists github-app && createdb github-app)",
+		"start": "(dropdb --if-exists github-app && createdb github-app) && (npx knex migrate:latest) && node server.js",
+		"project-install": "(dropdb --if-exists github-app && createdb github-app) && (npx knex migrate:latest) && nodemon server.js",
 		"heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build",
 		"knex": "knex"
 	},
 	"author": "Stenio L. de Souza",
-	"license": "ISC",
 	"dependencies": {
 		"axios": "^0.21.1",
 		"body-parser": "^1.19.0",

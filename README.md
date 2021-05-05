@@ -2,6 +2,12 @@
 
 Github application study with express, react and sqlite
 
+## Requirements
+
+1 - Postgress installed
+2 - Github APP for Oauth
+3 - Node and Npm installed
+
 ## Install API
 
 ```bash
