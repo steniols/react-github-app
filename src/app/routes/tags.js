@@ -1,5 +1,6 @@
 const router = require("express").Router();
-const dbPromise = require("../../config/database");
+const queries = require("../../config/queries/queriesTags");
+
 const axios = require("axios");
 require("dotenv").config();
 
@@ -10,29 +11,11 @@ async function getUser(token) {
   return await response.data;
 }
 
-router.get("/", async (req, res) => {
-  try {
-    const db = await dbPromise;
-    const user = await getUser("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");
-    const sql = "select * from tags where userID = ?";
-    const tags = await db.all(sql, user.id);
-    res.json({ tags });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Server Error");
-  }
-});
-
 router.post("/", async (req, res) => {
   try {
-    const db = await dbPromise;
     const user = await getUser(req.body.token);
-    const sql = "select * from tags where userID = ?";
-    const tags = await db.all(sql, user.id);
-    res.json({
-      message: "success",
-      data: tags,
-    });
+    const tags = await queries.getAll(user.id);
+    res.json({ data: tags });
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Server Error");
@@ -41,14 +24,8 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const db = await dbPromise;
-    const sql = "select * from tags where id = ?";
-    const params = [req.params.id];
-    const tag = await db.all(sql, params);
-    res.json({
-      message: "success",
-      data: tag,
-    });
+    const tag = await queries.getOne(req.params.id);
+    res.json({ data: tag });
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Server Error");
@@ -65,30 +42,21 @@ router.post("/save", async (req, res) => {
     return;
   }
 
+  // TODO: validar se título já existe
+
   try {
-    const db = await dbPromise;
     const user = await getUser(req.body.token);
     var tag = {
       title: req.body.title,
       content: req.body.content ? req.body.content : "",
-      imageUrl: req.body.imageUrl ? req.body.imageUrl : "",
-      userId: user.id,
+      image_url: req.body.image_url ? req.body.image_url : "",
+      user_id: user.id,
     };
-    var sql = `
-    INSERT INTO tags (
-      title,
-      content,
-      imageUrl,
-      userId
-    ) VALUES (?, ?, ?, ?)
-    `;
-    var params = [tag.title, tag.content, tag.imageUrl, tag.userId];
-    await db.run(sql, params);
-
+    const created = await queries.create(tag);
     res.json({
       message: "success",
-      data: tag,
-      id: this.lastID,
+      data: created[0],
+      id: created[0].id,
     });
   } catch (error) {
     console.log(error.message);
@@ -98,23 +66,18 @@ router.post("/save", async (req, res) => {
 
 router.put("/save/:id", async (req, res, next) => {
   try {
-    const db = await dbPromise;
+    // TODO: Validar se campos estão sendo enviados e campos obrigatórios
+
     const tag = {
       title: req.body.title,
       content: req.body.content,
-      imageUrl: req.body.imageUrl,
+      image_url: req.body.image_url,
     };
 
-    const sql = `UPDATE tags set 
-      title = COALESCE(?,title), 
-      content = COALESCE(?,content),
-      imageUrl= COALESCE(?,imageUrl)
-      WHERE id = ?`;
-
-    await db.run(sql, [tag.title, tag.content, tag.imageUrl, req.params.id]);
+    const updated = await queries.update(req.params.id, tag);
     res.json({
       message: "success",
-      data: tag,
+      data: updated[0],
     });
   } catch (error) {
     console.log(error.message);
@@ -124,8 +87,7 @@ router.put("/save/:id", async (req, res, next) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    const db = await dbPromise;
-    await db.run("DELETE FROM tags WHERE id = ?", req.params.id);
+    await queries.delete(req.params.id);
     res.json({ message: "deleted" });
   } catch (error) {
     console.log(error.message);

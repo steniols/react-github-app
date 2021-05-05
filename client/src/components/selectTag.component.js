@@ -6,9 +6,8 @@ const SelectTag = (props) => {
   props.tags.map((tag) => options.push({ label: tag.label, value: tag.key }));
 
   const defaultSelectedOptions = props.tagsSelected.map((stag) => {
-    return options.filter((tag) => tag.value === stag)[0];
+    return options.filter((tag) => tag.value == stag)[0];
   });
-
   const [selected, setSelected] = useState(defaultSelectedOptions);
 
   const overrideStrings = {
@@ -27,7 +26,7 @@ const SelectTag = (props) => {
         value={selected}
         onChange={(e) => {
           setSelected(e);
-          props.onChangeValue(e, props.repositoryId);
+          props.onChangeValue(e, props.repository_id);
         }}
         labelledBy="Select"
         overrideStrings={overrideStrings}

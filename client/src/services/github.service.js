@@ -10,12 +10,12 @@ const githubService = {
       try {
         const endpoint = apiUrl + "/github-get-userdata/" + token;
         const result = await axios.get(endpoint);
-        if (await result.data.userdata?.login) {
-          localStorage.setItem("loginGithub", result.data.userdata.login);
-          localStorage.setItem("nameGithub", result.data.userdata.name);
+        if (await result.data.data?.login) {
+          localStorage.setItem("loginGithub", result.data.data.login);
+          localStorage.setItem("nameGithub", result.data.data.name);
           return {
-            login: result.data.userdata.login,
-            name: result.data.userdata.name,
+            login: result.data.data.login,
+            name: result.data.data.name,
           };
         } else {
           return false;
@@ -55,8 +55,8 @@ const githubService = {
       const result = await axios.post(endpoint, data);
       const repositories = await result.data.repositories;
       return repositories;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
       throw new Error("Ocorreu um erro ao resgatar os repositórios.");
     }
   },

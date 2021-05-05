@@ -13,7 +13,7 @@ class PostEditPage extends React.Component {
       id: null,
       title: "",
       content: "",
-      imageUrl: "",
+      image_url: "",
       redirectTo: null,
     };
   }
@@ -32,7 +32,7 @@ class PostEditPage extends React.Component {
   async loadPost(tagId) {
     try {
       let res = await tagsService.getOne(tagId);
-      let tag = res.data.data[0];
+      let tag = res.data.data;
       this.setState(tag);
     } catch (error) {
       toast.error("Não foi possível carregar tag.");
@@ -43,7 +43,7 @@ class PostEditPage extends React.Component {
     let data = {
       title: this.state.title,
       content: this.state.content,
-      imageUrl: this.state.imageUrl,
+      image_url: this.state.image_url,
       token: localStorage.getItem("tokenGithub"),
     };
 
@@ -55,7 +55,7 @@ class PostEditPage extends React.Component {
       toast.error("O Conteúdo é obrigatório!");
       return;
     }
-    if (!data.imageUrl || data.imageUrl === "") {
+    if (!data.image_url || data.image_url === "") {
       toast.error("A Imagem URl é obrigatória!");
       return;
     }
@@ -134,8 +134,8 @@ class PostEditPage extends React.Component {
               type="text"
               className="form-control"
               id="batata"
-              value={this.state.imageUrl}
-              onChange={(e) => this.setState({ imageUrl: e.target.value })}
+              value={this.state.image_url}
+              onChange={(e) => this.setState({ image_url: e.target.value })}
             />
           </div>
         </form>

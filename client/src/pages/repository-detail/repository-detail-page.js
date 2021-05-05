@@ -31,7 +31,7 @@ class RepositoryDetailPage extends React.Component {
   async loadRepository(repositoryId) {
     try {
       let res = await githubService.getRepo(repositoryId);
-      this.setState({ repository: res.data.userdata });
+      this.setState({ repository: res.data.data });
     } catch (error) {
       toast.error("Não foi possível carregar o repositório.");
     }
@@ -45,13 +45,15 @@ class RepositoryDetailPage extends React.Component {
         return options.push({ key: _res.id, label: _res.title });
       });
       this.setState({ tags: options });
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Não foi possível carregar o select de tags.");
+    }
   }
 
-  handleSubmit(event, repositoryId) {
+  handleSubmit(event, repository_id) {
     try {
       const tags = event.map((e) => e.value);
-      const res = githubService.relTags(repositoryId, tags);
+      const res = githubService.relTags(repository_id, tags);
       if (res) {
         toast.success("As tags do repositório foram atualizadas com sucesso!");
       }
@@ -98,9 +100,13 @@ class RepositoryDetailPage extends React.Component {
                     </label>
                     {this.state.repository ? (
                       <SelectTag
-                        repositoryId={this.state.repository.id}
+                        repository_id={this.state.repository.repository_id}
                         tags={this.state.tags}
-                        tagsSelected={this.state.repository.tags}
+                        tagsSelected={
+                          this.state.repository.tags_ids
+                            ? this.state.repository.tags_ids.split(",")
+                            : []
+                        }
                         onChangeValue={this.handleSubmit}
                       ></SelectTag>
                     ) : null}

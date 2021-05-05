@@ -9,8 +9,10 @@
 	},
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node src/config/dbCreateTables.js && node server.js",
-		"heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build"
+		"start": "nodemon server.js",
+		"install-project": "(dropdb --if-exists github-app && createdb github-app)",
+		"heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build",
+		"knex": "knex"
 	},
 	"author": "Stenio L. de Souza",
 	"license": "ISC",
@@ -20,8 +22,11 @@
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
+		"knex": "^0.95.4",
 		"md5": "^2.3.0",
+		"morgan": "~1.9.1",
 		"node-fetch": "^2.6.1",
+		"pg": "^8.6.0",
 		"sqlite": "^4.0.21",
 		"sqlite3": "^5.0.0"
 	},

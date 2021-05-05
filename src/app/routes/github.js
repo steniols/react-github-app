@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const dbPromise = require("../../config/database");
+const queries = require("../../config/queries/queriesGithub");
 const axios = require("axios");
 require("dotenv").config();
 
@@ -33,11 +33,12 @@ router.get("/github-auth-callback", async (req, res) => {
     const token = await response.data.access_token;
     const user = await getUser(token);
 
-    const db = await dbPromise;
-    const inserToken = await db.run(
-      "INSERT OR IGNORE INTO auth (token, username) VALUES (?, ?)",
-      [token, user.login]
-    );
+    const data = {
+      token: token,
+      username: user.login,
+    };
+
+    await queries.saveToken(data);
 
     res.redirect(
       `${
@@ -66,11 +67,13 @@ router.post("/github-logout-user", async (req, res) => {
   try {
     const token = req.body.token;
     const username = req.body.username;
-    const db = await dbPromise;
-    await db.run("DELETE FROM auth WHERE token = ? AND username = ?", [
-      token,
-      username,
-    ]);
+    const data = {
+      token: token,
+      username: username,
+    };
+    await queries.deleteToken(data);
+
+    deleteToken;
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Server Error");
@@ -79,16 +82,11 @@ router.post("/github-logout-user", async (req, res) => {
 
 router.get("/github-get-userdata/:token", async (req, res) => {
   try {
-    const sql = "SELECT * FROM auth WHERE token = ?";
-    const db = await dbPromise;
-    const user = await db.get(sql, req.params.token);
-    const token = user.token;
-
+    const token = await queries.getToken(req.params.token);
     const response = await axios.get("https://api.github.com/user", {
-      headers: { authorization: `token ${token}` },
+      headers: { authorization: `token ${token.token}` },
     });
-
-    res.json({ userdata: response.data });
+    res.json({ data: response.data });
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Server Error");
@@ -114,38 +112,25 @@ router.post("/github-repositories", async (req, res) => {
       }
     );
 
-    const insertRepositoriesData = `INSERT OR IGNORE INTO repositories 
-      (repositoryId, name, fullName, description, cloneUrl, htmlUrl, userId) 
-      VALUES (?, ?, ?, ? , ?, ?, ?)`;
-
     const repositoriesResponse = response.data.items;
 
-    const db = await dbPromise;
     await Promise.all(
       repositoriesResponse.map(async (r) => {
-        await db.run(insertRepositoriesData, [
-          r.id,
-          r.name,
-          r.full_name,
-          r.description,
-          r.clone_url,
-          r.html_url,
-          r.owner.id,
-        ]);
+        const data = {
+          repository_id: r.id,
+          name: r.name,
+          full_name: r.full_name,
+          description: r.description,
+          clone_url: r.clone_url,
+          html_url: r.html_url,
+          user_id: r.owner.id,
+        };
+        await queries.saveRepository(data);
       })
     );
 
     const user = await getUser(token);
-
-    const getAllrepositoriesSql = `SELECT repositories.*, GROUP_CONCAT(tags.title) AS tagsDesc,
-    GROUP_CONCAT(tags.id) AS tagsIds
-    FROM repositories
-    LEFT JOIN rel_tags_repository ON repositories.repositoryId = rel_tags_repository.repositoryId
-    LEFT JOIN tags ON rel_tags_repository.tagId = tags.id
-    WHERE repositories.userId = ?
-    GROUP BY repositories.id`;
-
-    const repositories = await db.all(getAllrepositoriesSql, user.id);
+    const repositories = await queries.getAllRepositories(user.id);
 
     res.json({ repositories });
   } catch (error) {
@@ -162,31 +147,10 @@ router.post("/github-repository/:id", async (req, res) => {
       "https://api.github.com/repos/" + user + "/" + req.params.id,
       { headers: { authorization: `token ${token}` } }
     );
-    const {
-      id,
-      name,
-      full_name,
-      description,
-      clone_url,
-      html_url,
-    } = await response.data;
-    const repoData = {
-      id,
-      name,
-      full_name,
-      description,
-      clone_url,
-      html_url,
-    };
-    const sql =
-      "SELECT * FROM rel_tags_repository as rtr INNER JOIN tags as t ON t.id = rtr.tagId WHERE rtr.repositoryId = ?";
-    const db = await dbPromise;
-    const tags = await db.all(sql, id);
+    const { id } = await response.data;
+    const repository = await queries.getOneReposity(id);
 
-    repoData.tags = tags ? tags.map((row) => row.tagId) : [];
-    repoData.tagsDesc = tags ? tags.map((row) => row.title) : [];
-
-    res.json({ userdata: repoData });
+    res.json({ data: repository });
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Server Error");
@@ -215,19 +179,14 @@ router.post("/rel-tags/", async (req, res) => {
       });
     }
 
-    const db = await dbPromise;
-    await db.run(
-      "DELETE FROM rel_tags_repository WHERE repositoryId = ?",
-      repoId
-    );
-
-    const sql = `INSERT INTO rel_tags_repository (
-      repositoryId,
-      tagId
-    ) VALUES (?, ?)`;
+    await queries.removeTagsRepositoryRelationship(repoId);
 
     for (var i = 0; i < relData.length; i++) {
-      await db.run(sql, relData[i][0], relData[i][1]);
+      const data = {
+        repository_id: relData[i][0],
+        tag_id: relData[i][1],
+      };
+      await queries.saveTagsRepositoryRelationship(data);
     }
   } catch (error) {
     console.log(error.message);

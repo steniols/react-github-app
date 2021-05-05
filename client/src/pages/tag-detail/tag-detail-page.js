@@ -27,7 +27,7 @@ class PostDetailPage extends React.Component {
   async loadTag(tagId) {
     try {
       let res = await tagsService.getOne(tagId);
-      this.setState({ tag: res.data.data[0] });
+      this.setState({ tag: res.data.data });
     } catch (error) {
       console.log(error);
       toast.error("Não foi possível carregar a tag.");
@@ -69,7 +69,7 @@ class PostDetailPage extends React.Component {
           <div className="col-6">
             <img
               className="img mt-3 mb-3"
-              src={this.state?.tag?.imageUrl}
+              src={this.state?.tag?.image_url}
               alt=""
             />
           </div>

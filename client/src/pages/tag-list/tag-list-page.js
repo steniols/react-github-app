@@ -67,7 +67,7 @@ class PostListPage extends React.Component {
             <div className="card">
               <div className="card-horizontal">
                 <div className="img-square-wrapper card-img">
-                  <img src={tag.imageUrl} alt="" />
+                  <img src={tag.image_url} alt="" />
                 </div>
                 <div className="card-body">
                   <h4 className="card-title">{tag.title}</h4>
