@@ -6,7 +6,7 @@ const SelectTag = (props) => {
   props.tags.map((tag) => options.push({ label: tag.label, value: tag.key }));
 
   const defaultSelectedOptions = props.tagsSelected.map((stag) => {
-    return options.filter((tag) => tag.value == stag)[0];
+    return options.filter((tag) => tag.value.toString() === stag.toString())[0];
   });
   const [selected, setSelected] = useState(defaultSelectedOptions);
 

@@ -101,9 +101,9 @@ router.post("/github-repositories", async (req, res) => {
 
     let query = `q=user:${userName}`;
 
-    if (search) {
-      query += ` in:name,description+${search}`;
-    }
+    // if (search) {
+    //   query += ` in:name,description+${search}`;
+    // }
 
     const response = await axios.get(
       `https://api.github.com/search/repositories?${query}`,
@@ -130,7 +130,7 @@ router.post("/github-repositories", async (req, res) => {
     );
 
     const user = await getUser(token);
-    const repositories = await queries.getAllRepositories(user.id);
+    const repositories = await queries.getAllRepositories(user.id, search);
 
     res.json({ repositories });
   } catch (error) {

@@ -19,8 +19,8 @@ module.exports = {
       .where("username", data.username)
       .del();
   },
-  async getAllRepositories(user_id) {
-    return knex("repositories")
+  async getAllRepositories(user_id, search = false) {
+    let query = knex("repositories")
       .select(
         "repositories.*",
         knex.raw("string_agg(tags.title, ',') as tags_desc"),
@@ -34,6 +34,17 @@ module.exports = {
       .leftJoin("tags", "rel_tags_repository.tag_id", "tags.id")
       .where("repositories.user_id", user_id)
       .groupBy("repositories.id");
+
+    if (search) {
+      query.where(function () {
+        this.where("repositories.name", "like", `%${search}%`)
+          .orWhere("repositories.description", "like", `%${search}%`)
+          .orWhere("tags.title", "like", `%${search}%`)
+          .orWhere("tags.content", "like", `%${search}%`);
+      });
+    }
+
+    return query;
   },
 
   async saveRepository(data) {
