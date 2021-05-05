@@ -3,12 +3,14 @@ require("dotenv").config();
 module.exports = {
   production: {
     client: "pg",
-    connection: `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`,
+    connection:
+      process.env.DATABASE_URL ||
+      `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`,
     migrations: {
       directory: "migrations",
       tableName: "knex_migrations",
     },
-    ssl: true,
+    // ssl: true,
   },
   development: {
     client: "pg",
