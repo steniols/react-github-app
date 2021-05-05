@@ -6,7 +6,7 @@ module.exports = {
     connection: `postgresql://${process.env.PG_USER}:${process.env.PG_PASSWORD}@${process.env.PG_HOST}:${process.env.PG_PORT}/${process.env.PG_DATABASE}`,
     migrations: {
       directory: "migrations",
-      tableName: "migrations",
+      tableName: "knex_migrations",
     },
   },
   development: {
