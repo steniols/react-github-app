@@ -105,6 +105,7 @@ class App extends React.Component {
                     <button
                       className="btn btn-primary"
                       onClick={(e) => this.redirectGitHubLogin()}
+                      data-cy="button-login"
                     >
                       Login com o GitHub
                     </button>
