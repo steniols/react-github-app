@@ -1,3 +1,13 @@
 {
-"chromeWebSecurity": false
+    "chromeWebSecurity": false,
+    "db": {
+        "user": "postgres",
+        "host": "localhost",
+        "database": "github-app-test",
+        "password": "teste123",
+        "port":5432
+    },
+    "env": {
+        "github_client_id": "b04eb0c348dd9a0c2caa"
+    }
 }

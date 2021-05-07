@@ -101,10 +101,6 @@ router.post("/github-repositories", async (req, res) => {
 
     let query = `q=user:${userName}`;
 
-    // if (search) {
-    //   query += ` in:name,description+${search}`;
-    // }
-
     const response = await axios.get(
       `https://api.github.com/search/repositories?${query}`,
       {

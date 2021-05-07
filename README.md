@@ -61,6 +61,19 @@ npm install
 npm start
 ```
 
+## E2E Test
+This test uses the command below, which will:
+
+* Delete the `github-app-test` database if exists and create a new one with the same name;
+* Run the migrations to insert the tables in this new database;
+* Change the NODE_ENV to 'test' to run the server using this test database;
+* Run Backend and Frontend;
+* Run Cypress
+  
+```bash
+npm cypress-test
+```
+
 ## Live version
 
 https://steniols-pern-github-app.herokuapp.com/

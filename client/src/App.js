@@ -88,8 +88,8 @@ class App extends React.Component {
                 {this.state.login ? (
                   <>
                     <div className="nav-user__info">
-                      <h4>{this.state.name}</h4>
-                      <p>{this.state.login}</p>
+                      <h4 data-cy="github-name">{this.state.name}</h4>
+                      <p data-cy="github-login">{this.state.login}</p>
                     </div>
                     <button
                       className="btn btn-dark"
