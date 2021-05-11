@@ -41,6 +41,3 @@ yarn-error.log*
 /.changelog
 .npm/
 dist
-
-
-data.db
