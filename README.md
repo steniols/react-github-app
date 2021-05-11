@@ -61,17 +61,25 @@ npm install
 npm start
 ```
 
-## E2E Test
+## E2E Tests
+
+Create a `cypress.json` file and update it with Github App's Client ID. 
+```bash
+cp cypress.json.sample .cypress.json
+```
+
 This test uses the command below, which will:
 
 * Delete the `github-app-test` database if exists and create a new one with the same name;
 * Run the migrations to insert the tables in this new database;
-* Change the NODE_ENV to 'test' to run the server using this test database;
-* Run Backend and Frontend;
-* Run Cypress
+* Change the `NODE_ENV` to 'test' to run the server using this test database;
+* Run backend and frontend;
+* Run Cypress.
   
+
+
 ```bash
-npm cypress-test
+npm run cypress-test
 ```
 
 ## Live version
