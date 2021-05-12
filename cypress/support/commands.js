@@ -9,9 +9,12 @@ Cypress.Commands.add("githubLogin", () => {
 
   cy.get("body").then(($body) => {
     if ($body.find("#login_field").length > 0) {
-      cy.get("#login_field").type(Cypress.env("github_client_id"));
-      cy.get("#password").type(Cypress.env("github_client_id"));
+      cy.get("#login_field").type(Cypress.env("github_username"));
+      cy.get("#password").type(Cypress.env("github_password"));
       cy.get(".btn").click();
+    }
+    if ($body.find("#login_field").length > 0) {
+      cy.get("#js-oauth-authorize-btn").click();
     }
   });
 });
