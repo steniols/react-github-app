@@ -11,7 +11,7 @@
 		"start": "node server.js",
 		"project-install": "(dropdb --if-exists github-app && createdb github-app) && (npx knex migrate:latest) && nodemon server.js",
 		"heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build",
-		"cypress-test": "(dropdb --if-exists github-app-test && createdb github-app-test) && (npx knex migrate:latest --env=test) && concurrently \"NODE_ENV=test nodemon server.js\" \"cd client && npm start\" \"cross-env NODE_ENV=test ./node_modules/.bin/cypress open\"",
+		"cypress-test": "(dropdb --if-exists github-app-test && createdb github-app-test) && (npx knex migrate:latest --env=test) && concurrently \"NODE_ENV=test nodemon server.js\" \"cd client && BROWSER=none npm start\" \"cross-env NODE_ENV=test ./node_modules/.bin/cypress open\"",
 		"knex": "knex"
 	},
 	"author": "Stenio L. de Souza",

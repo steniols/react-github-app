@@ -7,7 +7,7 @@ describe("Github", () => {
     });
   });
 
-  it.skip("Listar os repositórios", () => {
+  it("Listar os repositórios", () => {
     cy.visit("http://localhost:3000/repository-list");
     cy.get("[data-cy=page-top-title]").should((el) => {
       expect(el.text()).equal("Repositórios");
