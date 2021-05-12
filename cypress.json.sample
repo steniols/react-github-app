@@ -1,5 +1,7 @@
 {
     "env": {
-        "github_client_id": ""
+        "github_client_id": "",
+        "github_username": "",
+        "github_password": ""
     }
 }

@@ -63,7 +63,7 @@ npm start
 
 ## E2E Tests
 
-Create a `cypress.json` file and update it with Github App's Client ID. 
+Create a `cypress.json` file and update it with Github App's Client ID and any Github login and password.
 ```bash
 cp cypress.json.sample .cypress.json
 ```
