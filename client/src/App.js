@@ -54,13 +54,13 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter>
-        <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light fixed-top navbar-dark">
           <div className="container">
             <Link to="/" className="navbar-brand">
               Github App
             </Link>
             <button
-              className="navbar-toggler"
+              className="navbar-toggler custom-toggler"
               type="button"
               data-toggle="collapse"
               data-target="#navbarMenu"
@@ -83,6 +83,9 @@ class App extends React.Component {
                     </Link>
                   </>
                 ) : null}
+              </div>
+              <div class="d-lg-none">
+                <hr />
               </div>
               <div className="nav-user">
                 {this.state.login ? (
@@ -112,6 +115,7 @@ class App extends React.Component {
                   </>
                 ) : null}
               </div>
+              <div class="d-lg-none"></div>
             </div>
           </div>
         </nav>

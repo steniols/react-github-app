@@ -40,6 +40,16 @@ input[type=text] {
     border-bottom-right-radius: 4px;
 }
 
+.loader-spinner {
+    margin-top: 50px;
+}
+
+@media (max-width: 992px) {
+    .loader-spinner {
+        margin-top: 80px;
+    }
+}
+
 /* Menu */
 
 .nav-user {
@@ -64,6 +74,22 @@ input[type=text] {
     color: $light;
     font-size: 12px;
     margin: 0;
+}
+
+
+.navbar-light {
+    background-color: $primary !important;
+}
+
+.navbar-light p,
+.navbar-light a {
+    color: $light !important
+}
+
+@media (max-width: 992px) {
+    .nav-user {
+        margin-bottom: 15px;
+    }
 }
 
 /* Page top */
@@ -207,13 +233,4 @@ a:link {
 
 body {
     background: $secondary;
-}
-
-.navbar-light {
-    background-color: $primary !important;
-}
-
-.navbar-light p,
-.navbar-light a {
-    color: $light !important
 }
