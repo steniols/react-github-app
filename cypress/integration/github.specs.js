@@ -3,7 +3,7 @@
 describe("Github", () => {
   it("Acessar a tela inicial após fazer o login", () => {
     cy.get("[data-cy=github-login]").should((el) => {
-      // expect(el.text()).equal("steniols");
+      expect(el.text()).to.be.a("string");
     });
   });
 

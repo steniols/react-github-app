@@ -13,7 +13,7 @@ Cypress.Commands.add("githubLogin", () => {
       cy.get("#password").type(Cypress.env("github_password"));
       cy.get(".btn").click();
     }
-    if ($body.find("#login_field").length > 0) {
+    if ($body.find("#js-oauth-authorize-btn").length > 0) {
       cy.get("#js-oauth-authorize-btn").click();
     }
   });
