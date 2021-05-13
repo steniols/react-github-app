@@ -1,10 +1,6 @@
 /// <reference types="cypress" />
 
 describe("Github", () => {
-  // it("Login", () => {
-  //   cy.githubLogin();
-  // });
-
   it("Acessar a tela inicial após fazer o login", () => {
     cy.get("[data-cy=github-login]").should((el) => {
       expect(el.text()).to.be.a("string");

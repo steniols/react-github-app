@@ -1,10 +1,6 @@
 /// <reference types="cypress" />
 
 describe("Tags", () => {
-  it("Login", () => {
-    cy.githubLogin();
-  });
-
   it("Listar as tags (Nenhum registo encontrado)", () => {
     cy.visit("http://localhost:3000/tag-list");
     cy.get("[data-cy=page-top-title]").should((el) => {

@@ -1,5 +1,5 @@
 Cypress.Commands.add("githubLogin", () => {
-  // cy.clearLocalStorage();
+  cy.clearLocalStorage();
 
   cy.visit(
     `https://github.com/login/oauth/authorize?client_id=${Cypress.env(
@@ -15,7 +15,9 @@ Cypress.Commands.add("githubLogin", () => {
       cy.get(".btn").click();
       cy.wait("@login");
     }
+  });
 
+  cy.get("body").then(($body) => {
     if ($body.find("#js-oauth-authorize-btn").length > 0) {
       cy.intercept("POST", "*").as("auth");
       cy.get("#js-oauth-authorize-btn").click();
