@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import PageTop from "../../components/page-top/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
+import LazyLoad from "react-lazyload";
 
 class RepositoryPage extends React.Component {
   constructor(props) {
@@ -85,23 +86,25 @@ class RepositoryPage extends React.Component {
         {this.loader()}
 
         {this.state.repos.map((repo) => (
-          <Link to={"/repository-detail/" + repo.name} key={repo.id}>
-            <div className="card">
-              <div className="card-body">
-                <h4>{repo.name}</h4>
-                <p className="mt-1">{repo.description}</p>
-                <p>
-                  {repo.tags_desc
-                    ? repo.tags_desc.split(",").map((r) => (
-                        <span className="badge badge-primary" key={r}>
-                          {r}
-                        </span>
-                      ))
-                    : null}
-                </p>
+          <LazyLoad height={200} debounce={100}>
+            <Link to={"/repository-detail/" + repo.name} key={repo.id}>
+              <div className="card">
+                <div className="card-body">
+                  <h4>{repo.name}</h4>
+                  <p className="mt-1">{repo.description}</p>
+                  <p>
+                    {repo.tags_desc
+                      ? repo.tags_desc.split(",").map((r) => (
+                          <span className="badge badge-primary" key={r}>
+                            {r}
+                          </span>
+                        ))
+                      : null}
+                  </p>
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </LazyLoad>
         ))}
       </div>
     );
