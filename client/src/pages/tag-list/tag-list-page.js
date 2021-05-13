@@ -77,7 +77,7 @@ class PostListPage extends React.Component {
                   </div>
                 </div>
               </div>
-            </Link>{" "}
+            </Link>
           </LazyLoad>
         ))}
       </div>
