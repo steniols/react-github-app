@@ -6,6 +6,7 @@ import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import { toast } from "react-toastify";
+import LazyLoad from "react-lazyload";
 
 class PostListPage extends React.Component {
   constructor(props) {
@@ -64,19 +65,21 @@ class PostListPage extends React.Component {
         {this.loader()}
 
         {this.state.tags.map((tag) => (
-          <Link to={"/tag-detail/" + tag.id} key={tag.id} data-cy="list-item">
-            <div className="card">
-              <div className="card-horizontal">
-                <div className="img-square-wrapper card-img">
-                  <img src={tag.image_url} alt="" />
-                </div>
-                <div className="card-body">
-                  <h4 className="card-title">{tag.title}</h4>
-                  <p className="card-text">{tag.content}</p>
+          <LazyLoad height={200} debounce={100}>
+            <Link to={"/tag-detail/" + tag.id} key={tag.id} data-cy="list-item">
+              <div className="card">
+                <div className="card-horizontal">
+                  <div className="img-square-wrapper card-img">
+                    <img src={tag.image_url} alt="" />
+                  </div>
+                  <div className="card-body">
+                    <h4 className="card-title">{tag.title}</h4>
+                    <p className="card-text">{tag.content}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+          </LazyLoad>
         ))}
       </div>
     );
