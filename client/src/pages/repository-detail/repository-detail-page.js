@@ -68,7 +68,7 @@ class RepositoryDetailPage extends React.Component {
     }
 
     return (
-      <div className="container">
+      <div className="container" data-cy="repository-detail">
         <PageTop title={"Repositório"} desc={"Detalhes do repositório"}>
           <button
             className="btn btn-light"

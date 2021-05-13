@@ -1,9 +1,14 @@
 import "./commands";
 
-beforeEach(() => {
-  cy.githubLogin();
+// beforeEach(() => {
+//   cy.githubLogin();
+// });
 
-  Cypress.Cookies.defaults({
-    preserve: /[\s\S]*/,
-  });
+beforeEach(() => {
+  cy.restoreLocalStorage();
+  cy.server();
+});
+
+afterEach(() => {
+  cy.saveLocalStorage();
 });

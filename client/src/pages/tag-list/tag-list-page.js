@@ -39,7 +39,7 @@ class PostListPage extends React.Component {
       return <Loader></Loader>;
     } else {
       return this.state.tags.length <= 0 ? (
-        <p>Nenhum registro encontrado</p>
+        <p data-cy="no-found-records">Nenhum registro encontrado</p>
       ) : null;
     }
   }
@@ -55,6 +55,7 @@ class PostListPage extends React.Component {
           <button
             className="btn btn-primary"
             onClick={() => this.props.history.push("/tag-add")}
+            data-cy="button-add-tag"
           >
             Adicionar
           </button>
@@ -63,7 +64,7 @@ class PostListPage extends React.Component {
         {this.loader()}
 
         {this.state.tags.map((tag) => (
-          <Link to={"/tag-detail/" + tag.id} key={tag.id}>
+          <Link to={"/tag-detail/" + tag.id} key={tag.id} data-cy="list-item">
             <div className="card">
               <div className="card-horizontal">
                 <div className="img-square-wrapper card-img">

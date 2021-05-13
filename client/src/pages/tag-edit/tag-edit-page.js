@@ -110,6 +110,7 @@ class PostEditPage extends React.Component {
               id="title"
               value={this.state.title}
               onChange={(e) => this.setState({ title: e.target.value })}
+              data-cy="tag-input-title"
             />
           </div>
           <div className="form-group">
@@ -124,18 +125,20 @@ class PostEditPage extends React.Component {
               rows={4}
               style={{ resize: "none" }}
               onChange={(e) => this.setState({ content: e.target.value })}
+              data-cy="tag-input-content"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="batata">
+            <label htmlFor="image_url">
               Url da imagem <span>*</span>
             </label>
             <input
               type="text"
               className="form-control"
-              id="batata"
+              id="image_url"
               value={this.state.image_url}
               onChange={(e) => this.setState({ image_url: e.target.value })}
+              data-cy="tag-input-image"
             />
           </div>
         </form>

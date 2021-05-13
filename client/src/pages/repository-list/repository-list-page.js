@@ -52,7 +52,7 @@ class RepositoryPage extends React.Component {
       return <Loader></Loader>;
     } else {
       return this.state.repos.length <= 0 ? (
-        <p>Nenhum registro encontrado</p>
+        <p data-cy="no-found-records">Nenhum registro encontrado</p>
       ) : null;
     }
   }
@@ -85,7 +85,11 @@ class RepositoryPage extends React.Component {
         {this.loader()}
 
         {this.state.repos.map((repo) => (
-          <Link to={"/repository-detail/" + repo.name} key={repo.id}>
+          <Link
+            to={"/repository-detail/" + repo.name}
+            key={repo.id}
+            data-cy="list-item"
+          >
             <div className="card">
               <div className="card-body">
                 <h4>{repo.name}</h4>
