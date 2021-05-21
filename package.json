@@ -1,37 +1,37 @@
 {
-	"name": "github-app-api",
-	"version": "1.0.0",
-	"description": "",
-	"main": "server.js",
-	"engines": {
-		"node": "15.3.0",
-		"npm": "7.11.0"
-	},
-	"scripts": {
-		"start": "node server.js",
-		"project-install": "(dropdb --if-exists github-app && createdb github-app) && (npx knex migrate:latest) && nodemon server.js",
-		"heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build",
-		"cypress-test": "(dropdb --if-exists github-app-test && createdb github-app-test) && (npx knex migrate:latest --env=test) && concurrently \"NODE_ENV=test nodemon server.js\" \"cd client && BROWSER=none npm start\" \"cross-env NODE_ENV=test ./node_modules/.bin/cypress open\"",
-		"knex": "knex"
-	},
-	"author": "Stenio L. de Souza",
-	"dependencies": {
-		"axios": "^0.21.1",
-		"body-parser": "^1.19.0",
-		"cors": "^2.8.5",
-		"cross-env": "^7.0.3",
-		"D": "^1.0.0",
-		"dotenv": "^8.2.0",
-		"express": "^4.17.1",
-		"knex": "^0.95.4",
-		"md5": "^2.3.0",
-		"morgan": "~1.9.1",
-		"node-fetch": "^2.6.1",
-		"pg": "^8.6.0"
-	},
-	"devDependencies": {
-		"concurrently": "^6.0.2",
-		"cypress": "6.4.0",
-		"nodemon": "^2.0.7"
-	}
+  "name": "github-app-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "engines": {
+    "node": "15.3.0",
+    "npm": "7.11.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "create-test-db": "PGPASSWORD=password dropdb --if-exists github-app-test -h localhost -p 5432 -U postgres && PGPASSWORD=password createdb github-app-test -h localhost -p 5432 -U postgres && (npx knex migrate:latest --env=test)",
+    "cypress-test": "(npm run create-test-db) && concurrently \"NODE_ENV=test nodemon server.js\" \"cd client && BROWSER=none npm start\" \"cross-env NODE_ENV=test ./node_modules/.bin/cypress open\"",
+    "heroku-postbuild": "cd client && npm install --legacy-peer-deps && npm run build",
+    "knex": "knex"
+  },
+  "author": "Stenio L. de Souza",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "D": "^1.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "knex": "^0.95.4",
+    "md5": "^2.3.0",
+    "morgan": "~1.9.1",
+    "node-fetch": "^2.6.1",
+    "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "concurrently": "^6.0.2",
+    "cypress": "6.4.0",
+    "nodemon": "^2.0.7"
+  }
 }
