@@ -115,20 +115,20 @@ class RepositoryDetailPage extends React.Component {
               ) : null}
             </div>
             <div className="col-6 bg-light rounded-right">
-              <div className="repository-info mt-4 ml-2">
+              <div className="repository-info mt-4">
                 <h4>Url</h4>
                 <p>
                   <Link
-                    to={{ pathname: this.state.repository?.htmlUrl }}
+                    to={{ pathname: this.state.repository?.html_url }}
                     target="_blank"
                   >
-                    {this.state.repository?.htmlUrl}
+                    {this.state.repository?.html_url}
                   </Link>
                 </p>
               </div>
               <div className="repository-info mt-4">
                 <h4>Clone URL</h4>
-                <p>git clone {this.state.repository?.cloneUrl}</p>
+                <p>git clone {this.state.repository?.clone_url}</p>
               </div>
             </div>
           </div>

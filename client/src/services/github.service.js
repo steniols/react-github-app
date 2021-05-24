@@ -8,8 +8,8 @@ const githubService = {
     const token = localStorage.getItem("tokenGithub");
     if (token) {
       try {
-        const endpoint = apiUrl + "/github-get-userdata/" + token;
-        const result = await axios.get(endpoint);
+        const url = `${apiUrl}/github-get-userdata/${token}`;
+        const result = await axios.get(url);
         if (await result.data.data?.login) {
           localStorage.setItem("loginGithub", result.data.data.login);
           localStorage.setItem("nameGithub", result.data.data.name);
@@ -30,15 +30,13 @@ const githubService = {
   async clearLoggedUser() {
     const token = localStorage.getItem("tokenGithub");
     const username = localStorage.getItem("loginGithub");
-
-    localStorage.clear();
-
-    let endpoint = apiUrl + "/github-logout-user";
+    const url = `${apiUrl}/github-logout-user`;
     const data = {
       token: token,
       username: username,
     };
-    const result = await axios.post(endpoint, data);
+    localStorage.clear();
+    const result = await axios.post(url, data);
     return result;
   },
 
@@ -46,13 +44,13 @@ const githubService = {
     try {
       const token = localStorage.getItem("tokenGithub");
       const user = localStorage.getItem("loginGithub");
-      let endpoint = apiUrl + "/github-repositories";
+      const url = `${apiUrl}/github-repositories`;
       const data = {
         token: token,
         user: user,
         search: search,
       };
-      const result = await axios.post(endpoint, data);
+      const result = await axios.post(url, data);
       const repositories = await result.data.repositories;
       return repositories;
     } catch (error) {
@@ -64,23 +62,23 @@ const githubService = {
   async getRepo(repoId) {
     const token = localStorage.getItem("tokenGithub");
     const user = localStorage.getItem("loginGithub");
-
-    const endpoint = apiUrl + "/github-repository/" + repoId;
+    const url = `${apiUrl}/github-repository/${repoId}`;
     const data = {
       token: token,
       user: user,
     };
-    const result = await axios.post(endpoint, data);
+    const result = await axios.post(url, data);
+    console.log(result);
     return result;
   },
 
   async relTags(repoId, tags) {
-    let endpoint = apiUrl + "/rel-tags";
+    let url = `${apiUrl}/rel-tags`;
     const data = {
       repoId: repoId,
       tags: tags,
     };
-    const result = await axios.post(endpoint, data);
+    const result = await axios.post(url, data);
     return result.data;
   },
 };
