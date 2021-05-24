@@ -45,6 +45,13 @@ class PostListPage extends React.Component {
     }
   }
 
+  callfun(obj) {
+    console.log(obj);
+    // var noimg =
+    //   "https://bhi.com.br/wp-content/themes/arkahost52/assets/images/default-245x245.jpg";
+    // obj.src = noimg;
+  }
+
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
@@ -65,12 +72,17 @@ class PostListPage extends React.Component {
         {this.loader()}
 
         {this.state.tags.map((tag) => (
-          <LazyLoad height={200} debounce={100}>
-            <Link to={"/tag-detail/" + tag.id} key={tag.id} data-cy="list-item">
+          <LazyLoad height={200} debounce={100} key={tag.id}>
+            <Link to={"/tag-detail/" + tag.id} data-cy="list-item">
               <div className="card">
                 <div className="card-horizontal">
                   <div className="img-square-wrapper card-img">
-                    <img src={tag.image_url} alt="" />
+                    <img
+                      src={tag.image_url}
+                      onError={(e) => {
+                        e.target.src = "/img/image-default.png";
+                      }}
+                    />
                   </div>
                   <div className="card-body">
                     <h4 className="card-title">{tag.title}</h4>

@@ -69,8 +69,10 @@ class PostDetailPage extends React.Component {
           <div className="col-6">
             <img
               className="img mt-3 mb-3"
-              src={this.state?.tag?.image_url}
-              alt=""
+              src={this.state.tag?.image_url}
+              onError={(e) => {
+                e.target.src = "/img/image-default.png";
+              }}
             />
           </div>
           <div className="col-6">

@@ -86,12 +86,8 @@ class RepositoryPage extends React.Component {
         {this.loader()}
 
         {this.state.repos.map((repo) => (
-          <LazyLoad height={200} debounce={100}>
-            <Link
-              to={"/repository-detail/" + repo.name}
-              key={repo.id}
-              data-cy="list-item"
-            >
+          <LazyLoad height={200} debounce={100} key={repo.id}>
+            <Link to={"/repository-detail/" + repo.name} data-cy="list-item">
               <div className="card">
                 <div className="card-body">
                   <h4>{repo.name}</h4>

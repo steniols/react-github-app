@@ -84,7 +84,7 @@ class App extends React.Component {
                   </>
                 ) : null}
               </div>
-              <div class="d-lg-none">
+              <div className="d-lg-none">
                 <hr />
               </div>
               <div className="nav-user">
@@ -115,7 +115,7 @@ class App extends React.Component {
                   </>
                 ) : null}
               </div>
-              <div class="d-lg-none"></div>
+              <div className="d-lg-none"></div>
             </div>
           </div>
         </nav>
