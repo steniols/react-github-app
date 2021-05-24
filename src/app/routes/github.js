@@ -32,14 +32,11 @@ router.get("/github-auth-callback", async (req, res) => {
     );
     const token = await response.data.access_token;
     const user = await getUser(token);
-
     const data = {
       token: token,
       username: user.login,
     };
-
     await queries.saveToken(data);
-
     res.redirect(
       `${
         process.env.NODE_ENV == "production" ? "/" : process.env.APP_URL
@@ -52,9 +49,9 @@ router.get("/github-auth-callback", async (req, res) => {
 });
 
 router.post("/github-logout-user", async (req, res) => {
-  var errors = [];
+  let errors = [];
   if (!req.body.token) {
-    errors.push("Token não informado");
+    errors.push("Token is required");
   }
   if (!req.body.username) {
     errors.push("Username não informado");
@@ -63,7 +60,6 @@ router.post("/github-logout-user", async (req, res) => {
     res.status(400).json({ error: errors.join(",") });
     return;
   }
-
   try {
     const token = req.body.token;
     const username = req.body.username;
@@ -81,6 +77,14 @@ router.post("/github-logout-user", async (req, res) => {
 });
 
 router.get("/github-get-userdata/:token", async (req, res) => {
+  let errors = [];
+  if (!req.params.token) {
+    errors.push("Token is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
     const token = await queries.getToken(req.params.token);
     const response = await axios.get("https://api.github.com/user", {
@@ -94,22 +98,29 @@ router.get("/github-get-userdata/:token", async (req, res) => {
 });
 
 router.post("/github-repositories", async (req, res) => {
+  let errors = [];
+  if (!req.body.token) {
+    errors.push("Token is required");
+  }
+  if (!req.body.user) {
+    errors.push("User is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
     const token = req.body.token;
-    const userName = req.body.user;
+    const username = req.body.user;
     const search = req.body.search;
-
-    let query = `q=user:${userName}`;
-
+    const query = `q=user:${username}`;
     const response = await axios.get(
       `https://api.github.com/search/repositories?${query}`,
       {
         headers: { authorization: `token ${token}` },
       }
     );
-
     const repositoriesResponse = response.data.items;
-
     await Promise.all(
       repositoriesResponse.map(async (r) => {
         const data = {
@@ -124,10 +135,8 @@ router.post("/github-repositories", async (req, res) => {
         await queries.saveRepository(data);
       })
     );
-
     const user = await getUser(token);
     const repositories = await queries.getAllRepositories(user.id, search);
-
     res.json({ repositories });
   } catch (error) {
     console.log(error.message);
@@ -136,6 +145,20 @@ router.post("/github-repositories", async (req, res) => {
 });
 
 router.post("/github-repository/:id", async (req, res) => {
+  let errors = [];
+  if (!req.body.token) {
+    errors.push("Token is required");
+  }
+  if (!req.body.user) {
+    errors.push("User is required");
+  }
+  if (!req.params.id) {
+    errors.push("Repository ID is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
     const token = req.body.token;
     const user = req.body.user;
@@ -145,7 +168,6 @@ router.post("/github-repository/:id", async (req, res) => {
     );
     const { id } = await response.data;
     const repository = await queries.getOneReposity(id);
-
     res.json({ data: repository });
   } catch (error) {
     console.log(error.message);
@@ -154,29 +176,24 @@ router.post("/github-repository/:id", async (req, res) => {
 });
 
 router.post("/rel-tags/", async (req, res) => {
-  var errors = [];
+  let errors = [];
   if (!req.body.repoId) {
     errors.push("Id do repositório não informado");
   }
-
   if (errors.length) {
     res.status(400).json({ error: errors.join(",") });
     return;
   }
-
   try {
     const repoId = req.body.repoId;
     const tags = req.body.tags;
-
-    relData = [];
+    let relData = [];
     if (tags) {
       tags.map((tag) => {
         relData.push([repoId, tag]);
       });
     }
-
     await queries.removeTagsRepositoryRelationship(repoId);
-
     for (var i = 0; i < relData.length; i++) {
       const data = {
         repository_id: relData[i][0],

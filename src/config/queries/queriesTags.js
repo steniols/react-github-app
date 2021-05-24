@@ -1,8 +1,14 @@
 const knex = require("./knex");
 
 module.exports = {
-  async getAll(user_id) {
-    return knex("tags").where("user_id", user_id);
+  async getAll(user_id, search = false) {
+    let query = knex("tags").where("user_id", user_id);
+    if (search) {
+      query.where(function () {
+        this.where("tags.title", search.trim());
+      });
+    }
+    return query;
   },
 
   async getOne(id) {

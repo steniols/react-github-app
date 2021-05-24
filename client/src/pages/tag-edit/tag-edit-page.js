@@ -56,7 +56,7 @@ class PostEditPage extends React.Component {
       return;
     }
     if (!data.image_url || data.image_url === "") {
-      toast.error("A Imagem URl é obrigatória!");
+      toast.error("A Url da Imagem é obrigatória!");
       return;
     }
 

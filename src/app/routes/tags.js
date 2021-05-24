@@ -12,6 +12,14 @@ async function getUser(token) {
 }
 
 router.post("/", async (req, res) => {
+  let errors = [];
+  if (!req.body.token) {
+    errors.push("Token is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
     const user = await getUser(req.body.token);
     const tags = await queries.getAll(user.id);
@@ -23,6 +31,14 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
+  let errors = [];
+  if (!req.params.id) {
+    errors.push("Tag ID is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
     const tag = await queries.getOne(req.params.id);
     res.json({ data: tag });
@@ -33,20 +49,17 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/save", async (req, res) => {
-  var errors = [];
+  let errors = [];
   if (!req.body.title) {
-    errors.push("Título não informado");
+    errors.push("Title is required");
   }
   if (errors.length) {
     res.status(400).json({ error: errors.join(",") });
     return;
   }
-
-  // TODO: validar se título já existe
-
   try {
     const user = await getUser(req.body.token);
-    var tag = {
+    const tag = {
       title: req.body.title,
       content: req.body.content ? req.body.content : "",
       image_url: req.body.image_url ? req.body.image_url : "",
@@ -65,9 +78,15 @@ router.post("/save", async (req, res) => {
 });
 
 router.put("/save/:id", async (req, res, next) => {
+  let errors = [];
+  if (!req.params.id) {
+    errors.push("Tag ID is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
-    // TODO: Validar se campos estão sendo enviados e campos obrigatórios
-
     const tag = {
       title: req.body.title,
       content: req.body.content,
@@ -86,6 +105,14 @@ router.put("/save/:id", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res) => {
+  let errors = [];
+  if (!req.params.id) {
+    errors.push("Tag ID is required");
+  }
+  if (errors.length) {
+    res.status(400).json({ error: errors.join(",") });
+    return;
+  }
   try {
     await queries.delete(req.params.id);
     res.json({ message: "deleted" });
