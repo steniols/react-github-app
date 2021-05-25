@@ -10,7 +10,7 @@ A simple GitHub application study with Postgres, Express, React and Node.
 * Create a [GitHub OAuth App](https://github.com/settings/developers):
   1) *Homepage URL* must be `http://localhost:3000`
   2) *Authorization callback URL* must be `http://localhost:8003/github/github-auth-callback`
-  3) Generate a Client Secret and save both *Client ID* and *Client Secret* for use later.
+  3) Generate a *Client Secret* and save both *Client ID* and *Client Secret* for use later.
 
 ## Install API (backend)
 
