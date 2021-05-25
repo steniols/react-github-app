@@ -3,7 +3,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import githubService from "../../services/github.service";
 
-import PageTop from "../../components/page-top/page-top.component";
+import PageTop from "../../components/page-top.component";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -51,7 +51,7 @@ class HomePage extends React.Component {
           </p>
         ) : (
           <p className={!this.state.showElements ? "d-none" : ""}>
-            Faça login com sua conta do github no canto superior direito.
+            Faça login com sua conta do GitHub no canto superior direito.
           </p>
         )}
       </div>

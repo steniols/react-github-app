@@ -3,9 +3,9 @@ import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import PageTop from "../../components/page-top/page-top.component";
+import PageTop from "../../components/page-top.component";
 import Loader from "../../components/loader.component";
-import SelectTag from "../../components/selectTag.component";
+import SelectTag from "../../components/select-tag.component";
 import { toast } from "react-toastify";
 
 class RepositoryDetailPage extends React.Component {

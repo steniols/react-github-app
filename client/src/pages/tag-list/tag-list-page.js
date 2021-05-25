@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import PageTop from "../../components/page-top/page-top.component";
+import PageTop from "../../components/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
