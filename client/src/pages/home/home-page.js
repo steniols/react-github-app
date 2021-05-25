@@ -2,7 +2,6 @@
 import React from "react";
 import { Redirect } from "react-router";
 import githubService from "../../services/github.service";
-
 import PageTop from "../../components/page-top.component";
 
 class HomePage extends React.Component {

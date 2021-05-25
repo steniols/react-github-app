@@ -1,9 +1,9 @@
 import React from "react";
 import { Redirect } from "react-router";
-import PageTop from "../../components/page-top.component";
+import { toast } from "react-toastify";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import { toast } from "react-toastify";
+import PageTop from "../../components/page-top.component";
 
 class PostEditPage extends React.Component {
   constructor(props) {
@@ -114,6 +114,7 @@ class PostEditPage extends React.Component {
               id="title"
               value={this.state.title}
               onChange={(e) => this.setState({ title: e.target.value })}
+              maxlength="40"
               data-cy="tag-input-title"
             />
           </div>
@@ -128,6 +129,7 @@ class PostEditPage extends React.Component {
               value={this.state.content}
               rows={4}
               style={{ resize: "none" }}
+              maxlength="600"
               onChange={(e) => this.setState({ content: e.target.value })}
               data-cy="tag-input-content"
             />

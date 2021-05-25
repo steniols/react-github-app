@@ -1,10 +1,10 @@
 import React from "react";
 import { Redirect } from "react-router";
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
+import { toast } from "react-toastify";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import { toast } from "react-toastify";
+import PageTop from "../../components/page-top.component";
+import Loader from "../../components/loader.component";
 
 class PostDetailPage extends React.Component {
   constructor(props) {

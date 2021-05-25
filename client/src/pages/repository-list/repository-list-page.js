@@ -2,10 +2,10 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import LazyLoad from "react-lazyload";
 import PageTop from "../../components/page-top.component";
 import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
-import LazyLoad from "react-lazyload";
 
 class RepositoryPage extends React.Component {
   constructor(props) {

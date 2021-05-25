@@ -1,12 +1,12 @@
 import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
-import githubService from "../../services/github.service";
-import tagsService from "../../services/tags.service";
 import { toast } from "react-toastify";
 import LazyLoad from "react-lazyload";
+import githubService from "../../services/github.service";
+import tagsService from "../../services/tags.service";
+import PageTop from "../../components/page-top.component";
+import Loader from "../../components/loader.component";
 
 class PostListPage extends React.Component {
   constructor(props) {
@@ -45,13 +45,6 @@ class PostListPage extends React.Component {
     }
   }
 
-  callfun(obj) {
-    console.log(obj);
-    // var noimg =
-    //   "https://bhi.com.br/wp-content/themes/arkahost52/assets/images/default-245x245.jpg";
-    // obj.src = noimg;
-  }
-
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
@@ -86,7 +79,7 @@ class PostListPage extends React.Component {
                   </div>
                   <div className="card-body">
                     <h4 className="card-title">{tag.title}</h4>
-                    <p className="card-text">{tag.content}</p>
+                    <p className="card-text">{tag.content.substring(0, 230)}</p>
                   </div>
                 </div>
               </div>
