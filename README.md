@@ -1,4 +1,4 @@
-# React PERN GitHub App
+PERN GitHub App
 
 A simple GitHub application study with Postgres, Express, React and Node.
 
