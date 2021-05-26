@@ -78,7 +78,7 @@ npm start
 Create a `cypress.json` file and update it with GitHub App's Client ID and any GitHub login and password.
 
 ```bash
-cp cypress.json.sample .cypress.json
+cp cypress.json.sample cypress.json
 ```
 
 This test uses the command below, which will:
