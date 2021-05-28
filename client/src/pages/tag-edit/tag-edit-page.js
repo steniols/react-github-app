@@ -114,9 +114,7 @@ class PostEditPage extends React.Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="content">
-              Conteúdo <span>*</span>
-            </label>
+            <label htmlFor="content">Conteúdo</label>
             <textarea
               type="text"
               className="form-control"
@@ -130,9 +128,7 @@ class PostEditPage extends React.Component {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="image_url">
-              Url da imagem <span>*</span>
-            </label>
+            <label htmlFor="image_url">Url da imagem</label>
             <input
               type="text"
               className="form-control"
