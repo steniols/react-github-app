@@ -1,4 +1,4 @@
-# React PERN GitHub App
+PERN GitHub App
 
 A simple GitHub application study with Postgres, Express, React and Node.
 
@@ -78,7 +78,16 @@ npm start
 Create a `cypress.json` file and update it with GitHub App's Client ID and any GitHub login and password.
 
 ```bash
-cp cypress.json.sample .cypress.json
+cp cypress.json.sample cypress.json
+```
+```bash
+{
+  "env": {
+    "github_client_id": "<CLIENT_ID>",
+    "github_username": "<GITHUB_LOGIN>",
+    "github_password": "<GITHUB_PASSWORD>"
+  }
+}
 ```
 
 This test uses the command below, which will:
