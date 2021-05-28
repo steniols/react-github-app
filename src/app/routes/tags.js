@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
     errors.push("Token is required");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
     res.json({ data: tags });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -36,7 +36,7 @@ router.get("/:id", async (req, res) => {
     errors.push("Tag ID is required");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -44,7 +44,7 @@ router.get("/:id", async (req, res) => {
     res.json({ data: tag });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -53,8 +53,9 @@ router.post("/save", async (req, res) => {
   if (!req.body.title) {
     errors.push("Title is required");
   }
+
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -67,13 +68,13 @@ router.post("/save", async (req, res) => {
     };
     const created = await queries.create(tag);
     res.json({
-      message: "success",
+      message: "Tag saved with success",
       data: created[0],
       id: created[0].id,
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -82,8 +83,11 @@ router.put("/save/:id", async (req, res, next) => {
   if (!req.params.id) {
     errors.push("Tag ID is required");
   }
+  if (!req.body.title) {
+    errors.push("Title is required");
+  }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -92,15 +96,14 @@ router.put("/save/:id", async (req, res, next) => {
       content: req.body.content,
       image_url: req.body.image_url,
     };
-
     const updated = await queries.update(req.params.id, tag);
     res.json({
-      message: "success",
+      message: "Tag updated with success",
       data: updated[0],
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -110,15 +113,15 @@ router.delete("/:id", async (req, res) => {
     errors.push("Tag ID is required");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
     await queries.delete(req.params.id);
-    res.json({ message: "deleted" });
+    res.json({ message: "Tag deleted with success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 

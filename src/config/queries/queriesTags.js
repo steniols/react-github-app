@@ -24,6 +24,11 @@ module.exports = {
   },
 
   async delete(id) {
+    this.deleteTagRelations(id);
     return knex("tags").where("id", id).del();
+  },
+
+  async deleteTagRelations(id) {
+    return knex("rel_tags_repository").where("tag_id", id).del();
   },
 };

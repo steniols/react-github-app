@@ -202,7 +202,7 @@ router.post("/rel-tags/", async (req, res) => {
       await queries.saveTagsRepositoryRelationship(data);
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     res.status(500).send("Server Error");
   }
 });

@@ -1,0 +1,9 @@
+{
+  "Title is required": "O Título é obrigatório",
+  "Tag saved with success": "A Tag foi salva com sucesso",
+  "Tag updated with success": "A tag foi atualizada com sucesso",
+  "Tag deleted with success": "A tag foi excluída com sucesso",
+  "Token is required": "O token é obrigatório",
+  "Server Error": "Ocorreu um erro no servidor, tente novamente mais tarde",
+  "Tag ID is required": "É necessário informar uma tag"
+}

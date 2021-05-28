@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import { toast } from "react-toastify";
+import { withTranslation } from "react-i18next";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import PageTop from "../../components/page-top.component";
@@ -37,13 +38,23 @@ class PostDetailPage extends React.Component {
   async deleteTag(tagId) {
     if (!window.confirm("Deseja realmente excluir esta tag?")) return;
 
+    const { t, i18n } = this.props;
     try {
-      await tagsService.delete(tagId);
-      toast.success("A tag foi excluída com sucesso");
+      const response = await tagsService.delete(tagId);
+      toast.success(t(response.data.message));
       this.props.history.replace("/tag-list");
     } catch (error) {
-      console.log(error);
-      toast.error("Não foi possível excluir a tag.");
+      const errorMessages = error?.response?.data?.message;
+      if (errorMessages) {
+        const errorsTranslated = errorMessages.map((err) => t(err));
+        errorsTranslated.map((e) => {
+          toast.error(e);
+        });
+      } else {
+        toast.error(
+          "O servidor não está respondendo, tente novamente mais tarde"
+        );
+      }
     }
   }
 
@@ -117,4 +128,4 @@ class PostDetailPage extends React.Component {
   }
 }
 
-export default PostDetailPage;
+export default withTranslation("common")(PostDetailPage);

@@ -1,6 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import { toast } from "react-toastify";
+import { withTranslation } from "react-i18next";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
 import PageTop from "../../components/page-top.component";
@@ -8,7 +9,6 @@ import PageTop from "../../components/page-top.component";
 class PostEditPage extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       id: null,
       title: "",
@@ -31,45 +31,43 @@ class PostEditPage extends React.Component {
 
   async loadPost(tagId) {
     try {
-      let res = await tagsService.getOne(tagId);
-      let tag = res.data.data;
+      let response = await tagsService.getOne(tagId);
+      let tag = response.data.data;
       this.setState(tag);
     } catch (error) {
-      toast.error("Não foi possível carregar tag.");
+      toast.error("Não foi possível carregar tag, tente novamente mais tarde");
     }
   }
 
   async sendPost() {
-    let data = {
+    const { t, i18n } = this.props;
+    const data = {
       title: this.state.title,
       content: this.state.content,
       image_url: this.state.image_url,
       token: localStorage.getItem("tokenGithub"),
     };
-
-    if (!data.title || data.title === "") {
-      toast.error("O Título é obrigatório!");
-      return;
-    }
-    if (!data.content || data.content === "") {
-      toast.error("O Conteúdo é obrigatório!");
-      return;
-    }
-    if (!data.image_url || data.image_url === "") {
-      toast.error("A Url da Imagem é obrigatória!");
-      return;
-    }
-
     try {
       if (this.state.id) {
-        await tagsService.edit(data, this.state.id);
-        toast.success("A tag foi editada com sucesso!");
+        const response = await tagsService.edit(data, this.state.id);
+        console.log(response.data.message);
+        toast.success(t(response.data.message));
       } else {
-        await tagsService.create(data);
-        toast.success("A tag foi criada com sucesso!");
+        const response = await tagsService.create(data);
+        toast.success(t(response.data.message));
       }
     } catch (error) {
-      toast.error("Erro ao criar a tag!");
+      const errorMessages = error?.response?.data?.message;
+      if (errorMessages) {
+        const errorsTranslated = errorMessages.map((err) => t(err));
+        errorsTranslated.map((e) => {
+          toast.error(e);
+        });
+      } else {
+        toast.error(
+          "O servidor não está respondendo, tente novamente mais tarde"
+        );
+      }
     }
   }
 
@@ -82,6 +80,8 @@ class PostEditPage extends React.Component {
     let desc = this.state.id
       ? "Editar informações de uma tag"
       : "Formulário para a criação de tags";
+
+    const { t } = this.props;
 
     return (
       <div className="container">
@@ -102,7 +102,6 @@ class PostEditPage extends React.Component {
             </button>
           </div>
         </PageTop>
-
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="form-group">
             <label htmlFor="title">
@@ -114,7 +113,7 @@ class PostEditPage extends React.Component {
               id="title"
               value={this.state.title}
               onChange={(e) => this.setState({ title: e.target.value })}
-              maxlength="40"
+              maxLength="40"
               data-cy="tag-input-title"
             />
           </div>
@@ -129,7 +128,7 @@ class PostEditPage extends React.Component {
               value={this.state.content}
               rows={4}
               style={{ resize: "none" }}
-              maxlength="600"
+              maxLength="600"
               onChange={(e) => this.setState({ content: e.target.value })}
               data-cy="tag-input-content"
             />
@@ -153,4 +152,4 @@ class PostEditPage extends React.Component {
   }
 }
 
-export default PostEditPage;
+export default withTranslation("common")(PostEditPage);
