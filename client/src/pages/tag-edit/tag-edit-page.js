@@ -40,7 +40,7 @@ class PostEditPage extends React.Component {
   }
 
   async sendPost() {
-    const { t, i18n } = this.props;
+    const { t } = this.props;
     const data = {
       title: this.state.title,
       content: this.state.content,
@@ -60,9 +60,7 @@ class PostEditPage extends React.Component {
       const errorMessages = error?.response?.data?.message;
       if (errorMessages) {
         const errorsTranslated = errorMessages.map((err) => t(err));
-        errorsTranslated.map((e) => {
-          toast.error(e);
-        });
+        errorsTranslated.map((e) => toast.error(e));
       } else {
         toast.error(
           "O servidor não está respondendo, tente novamente mais tarde"
@@ -80,8 +78,6 @@ class PostEditPage extends React.Component {
     let desc = this.state.id
       ? "Editar informações de uma tag"
       : "Formulário para a criação de tags";
-
-    const { t } = this.props;
 
     return (
       <div className="container">

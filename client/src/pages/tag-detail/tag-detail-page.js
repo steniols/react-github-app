@@ -38,7 +38,7 @@ class PostDetailPage extends React.Component {
   async deleteTag(tagId) {
     if (!window.confirm("Deseja realmente excluir esta tag?")) return;
 
-    const { t, i18n } = this.props;
+    const { t } = this.props;
     try {
       const response = await tagsService.delete(tagId);
       toast.success(t(response.data.message));
@@ -47,9 +47,7 @@ class PostDetailPage extends React.Component {
       const errorMessages = error?.response?.data?.message;
       if (errorMessages) {
         const errorsTranslated = errorMessages.map((err) => t(err));
-        errorsTranslated.map((e) => {
-          toast.error(e);
-        });
+        errorsTranslated.map((e) => toast.error(e));
       } else {
         toast.error(
           "O servidor não está respondendo, tente novamente mais tarde"
@@ -79,6 +77,7 @@ class PostDetailPage extends React.Component {
         <div className="row  bg-light">
           <div className="col-6">
             <img
+              alt="Tag"
               className="img mt-3 mb-3"
               src={this.state.tag?.image_url}
               onError={(e) => {

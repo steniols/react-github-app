@@ -72,6 +72,7 @@ class PostListPage extends React.Component {
                   <div className="img-square-wrapper card-img">
                     <img
                       src={tag.image_url}
+                      alt="Tag"
                       onError={(e) => {
                         e.target.src = "/img/image-default.png";
                       }}
