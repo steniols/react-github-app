@@ -44,7 +44,7 @@ router.get("/github-auth-callback", async (req, res) => {
     );
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -57,7 +57,7 @@ router.post("/github-logout-user", async (req, res) => {
     errors.push("Username não informado");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -72,7 +72,7 @@ router.post("/github-logout-user", async (req, res) => {
     deleteToken;
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -82,7 +82,7 @@ router.get("/github-get-userdata/:token", async (req, res) => {
     errors.push("Token is required");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -93,7 +93,7 @@ router.get("/github-get-userdata/:token", async (req, res) => {
     res.json({ data: response.data });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -106,7 +106,7 @@ router.post("/github-repositories", async (req, res) => {
     errors.push("User is required");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -140,7 +140,7 @@ router.post("/github-repositories", async (req, res) => {
     res.json({ repositories });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -156,7 +156,7 @@ router.post("/github-repository/:id", async (req, res) => {
     errors.push("Repository ID is required");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -171,7 +171,7 @@ router.post("/github-repository/:id", async (req, res) => {
     res.json({ data: repository });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 
@@ -181,7 +181,7 @@ router.post("/rel-tags/", async (req, res) => {
     errors.push("Id do repositório não informado");
   }
   if (errors.length) {
-    res.status(400).json({ error: errors.join(",") });
+    res.status(400).json({ message: errors });
     return;
   }
   try {
@@ -203,7 +203,7 @@ router.post("/rel-tags/", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).send("Server Error");
+    res.status(500).json({ message: ["Server Error"] });
   }
 });
 

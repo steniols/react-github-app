@@ -40,7 +40,6 @@ class PostEditPage extends React.Component {
   }
 
   async sendPost() {
-    const { t } = this.props;
     const data = {
       title: this.state.title,
       content: this.state.content,
@@ -51,15 +50,15 @@ class PostEditPage extends React.Component {
       if (this.state.id) {
         const response = await tagsService.edit(data, this.state.id);
         console.log(response.data.message);
-        toast.success(t(response.data.message));
+        toast.success(this.props.t(response.data.message));
       } else {
         const response = await tagsService.create(data);
-        toast.success(t(response.data.message));
+        toast.success(this.props.t(response.data.message));
       }
     } catch (error) {
       const errorMessages = error?.response?.data?.message;
       if (errorMessages) {
-        const errorsTranslated = errorMessages.map((err) => t(err));
+        const errorsTranslated = errorMessages.map((err) => this.props.t(err));
         errorsTranslated.map((e) => toast.error(e));
       } else {
         toast.error(

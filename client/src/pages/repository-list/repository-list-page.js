@@ -2,6 +2,7 @@ import React from "react";
 import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { withTranslation } from "react-i18next";
 import LazyLoad from "react-lazyload";
 import PageTop from "../../components/page-top.component";
 import Loader from "../../components/loader.component";
@@ -44,7 +45,15 @@ class RepositoryPage extends React.Component {
       let res = await githubService.getRepos(search);
       this.setState({ repos: res, loader: false });
     } catch (error) {
-      toast.error("Não foi possível listar os repositórios.");
+      const errorMessages = error?.response?.data?.message;
+      if (errorMessages) {
+        const errorsTranslated = errorMessages.map((err) => this.props.t(err));
+        errorsTranslated.map((e) => toast.error(e));
+      } else {
+        toast.error(
+          "O servidor não está respondendo, tente novamente mais tarde."
+        );
+      }
     }
   }
 
@@ -111,4 +120,4 @@ class RepositoryPage extends React.Component {
   }
 }
 
-export default RepositoryPage;
+export default withTranslation("common")(RepositoryPage);

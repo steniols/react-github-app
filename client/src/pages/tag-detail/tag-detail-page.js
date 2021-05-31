@@ -37,16 +37,14 @@ class PostDetailPage extends React.Component {
 
   async deleteTag(tagId) {
     if (!window.confirm("Deseja realmente excluir esta tag?")) return;
-
-    const { t } = this.props;
     try {
       const response = await tagsService.delete(tagId);
-      toast.success(t(response.data.message));
+      toast.success(this.props.t(response.data.message));
       this.props.history.replace("/tag-list");
     } catch (error) {
       const errorMessages = error?.response?.data?.message;
       if (errorMessages) {
-        const errorsTranslated = errorMessages.map((err) => t(err));
+        const errorsTranslated = errorMessages.map((err) => this.props.t(err));
         errorsTranslated.map((e) => toast.error(e));
       } else {
         toast.error(
