@@ -4,16 +4,16 @@ import { toast } from "react-toastify";
 import { withTranslation } from "react-i18next";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
+import TagDetailPageScreen from "./tag-detail-page.jsx";
 
-class PostDetailPage extends React.Component {
+class TagDetailPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tag: null,
       redirectTo: null,
     };
+    this.deleteTag = this.deleteTag.bind(this);
   }
 
   componentDidMount() {
@@ -58,71 +58,14 @@ class PostDetailPage extends React.Component {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-
     return (
-      <div className="container">
-        <PageTop title={"Tag"} desc={"Detalhes da tag"}>
-          <button
-            className="btn btn-light"
-            onClick={() => this.props.history.goBack()}
-          >
-            Voltar
-          </button>
-        </PageTop>
-
-        {!this.state.tag ? <Loader /> : null}
-
-        <div className="row  bg-light">
-          <div className="col-6">
-            <img
-              alt="Tag"
-              className="img mt-3 mb-3"
-              src={this.state.tag?.image_url}
-              onError={(e) => {
-                e.target.src = "/img/image-default.png";
-              }}
-            />
-          </div>
-          <div className="col-6">
-            <div className="info mt-4">
-              <h4>ID</h4>
-              <p>{this.state.tag?.id}</p>
-            </div>
-            <div className="info">
-              <h4>Título</h4>
-              <p>{this.state.tag?.title}</p>
-            </div>
-            <div className="info">
-              <h4>Conteúdo</h4>
-              <p>{this.state.tag?.content}</p>
-            </div>
-            <div
-              className="btn-group mb-3"
-              role="group"
-              aria-label="Basic example"
-            >
-              <button
-                type="button"
-                className="btn btn-sm btn-danger"
-                onClick={() => this.deleteTag(this.state.tag.id)}
-              >
-                Excluir
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={() =>
-                  this.props.history.push("/tag-edit/" + this.state.tag.id)
-                }
-              >
-                Editar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TagDetailPageScreen
+        {...this.state}
+        history={this.props.history}
+        deleteTag={this.deleteTag}
+      />
     );
   }
 }
 
-export default withTranslation("common")(PostDetailPage);
+export default withTranslation("common")(TagDetailPage);

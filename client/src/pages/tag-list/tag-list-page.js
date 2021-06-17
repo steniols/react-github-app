@@ -1,14 +1,11 @@
 import React from "react";
 import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import LazyLoad from "react-lazyload";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
+import TagListPageScreen from "./tag-list-page.jsx";
 
-class PostListPage extends React.Component {
+class TagListPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,61 +32,12 @@ class PostListPage extends React.Component {
     }
   }
 
-  loader() {
-    if (this.state.loader) {
-      return <Loader></Loader>;
-    } else {
-      return this.state.tags.length <= 0 ? (
-        <p data-cy="no-found-records">Nenhum registro encontrado</p>
-      ) : null;
-    }
-  }
-
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-
-    return (
-      <div className="container">
-        <PageTop title={"Tags"} desc={"Listagem de tags"}>
-          <button
-            className="btn btn-primary"
-            onClick={() => this.props.history.push("/tag-add")}
-            data-cy="button-add-tag"
-          >
-            Adicionar
-          </button>
-        </PageTop>
-
-        {this.loader()}
-
-        {this.state.tags.map((tag) => (
-          <LazyLoad height={200} debounce={100} key={tag.id}>
-            <Link to={"/tag-detail/" + tag.id} data-cy="list-item">
-              <div className="card">
-                <div className="card-horizontal">
-                  <div className="img-square-wrapper card-img">
-                    <img
-                      src={tag.image_url}
-                      alt="Tag"
-                      onError={(e) => {
-                        e.target.src = "/img/image-default.png";
-                      }}
-                    />
-                  </div>
-                  <div className="card-body">
-                    <h4 className="card-title">{tag.title}</h4>
-                    <p className="card-text">{tag.content.substring(0, 230)}</p>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </LazyLoad>
-        ))}
-      </div>
-    );
+    return <TagListPageScreen {...this.state} history={this.props.history} />;
   }
 }
 
-export default PostListPage;
+export default TagListPage;

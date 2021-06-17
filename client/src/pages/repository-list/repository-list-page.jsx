@@ -50,7 +50,6 @@ class RepositoryPageScreen extends React.Component {
 
         {(!this.props.loader && this.props.repos.length <= 0) ?
           <p data-cy="no-found-records">Nenhum registro encontrado</p> : ''}
-
       </div>
     </>
   }

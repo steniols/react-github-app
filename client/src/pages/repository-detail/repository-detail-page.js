@@ -75,7 +75,7 @@ class RepositoryDetailPage extends React.Component {
     return (
       <RepositoryDetailPageScreen
         {...this.state}
-        back={this.props.history.goBack}
+        history={this.props.history}
         handleSubmit={this.handleSubmit}
       ></RepositoryDetailPageScreen>
     );

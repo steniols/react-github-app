@@ -11,7 +11,7 @@ class RepositoryDetailPageScreen extends React.Component {
         <PageTop title={"Repositório"} desc={"Detalhes do repositório"}>
           <button
             className="btn btn-light"
-            onClick={() => this.props.back()}
+            onClick={() => this.props.history.goBack()}
           >
             Voltar
           </button>

@@ -4,9 +4,9 @@ import { toast } from "react-toastify";
 import { withTranslation } from "react-i18next";
 import githubService from "../../services/github.service";
 import tagsService from "../../services/tags.service";
-import PageTop from "../../components/page-top.component";
+import TagEditPageScreen from "./tag-edit-page.jsx";
 
-class PostEditPage extends React.Component {
+class TagEditPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,6 +16,8 @@ class PostEditPage extends React.Component {
       image_url: "",
       redirectTo: null,
     };
+    this.sendPost = this.sendPost.bind(this);
+    this.setValue = this.setValue.bind(this);
   }
 
   componentDidMount() {
@@ -27,6 +29,10 @@ class PostEditPage extends React.Component {
       let tagId = this.props.match.params.id;
       this.loadPost(tagId);
     }
+  }
+
+  setValue(obj) {
+    this.setState(obj);
   }
 
   async loadPost(tagId) {
@@ -72,75 +78,15 @@ class PostEditPage extends React.Component {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-
-    let title = this.state.id ? "Editar Tag" : "Nova Tag";
-    let desc = this.state.id
-      ? "Editar informações de uma tag"
-      : "Formulário para a criação de tags";
-
     return (
-      <div className="container">
-        <PageTop title={title} desc={desc}>
-          <div className="btn-group" role="group" aria-label="Basic example">
-            <button
-              className="btn btn-light"
-              onClick={() => this.props.history.replace("/tag-list")}
-            >
-              Cancelar
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={() => this.sendPost()}
-              data-cy="tag-submit"
-            >
-              Salvar
-            </button>
-          </div>
-        </PageTop>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className="form-group">
-            <label htmlFor="title">
-              Título <span>*</span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="title"
-              value={this.state.title}
-              onChange={(e) => this.setState({ title: e.target.value })}
-              maxLength="40"
-              data-cy="tag-input-title"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="content">Conteúdo</label>
-            <textarea
-              type="text"
-              className="form-control"
-              id="content"
-              value={this.state.content}
-              rows={4}
-              style={{ resize: "none" }}
-              maxLength="600"
-              onChange={(e) => this.setState({ content: e.target.value })}
-              data-cy="tag-input-content"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="image_url">Url da imagem</label>
-            <input
-              type="text"
-              className="form-control"
-              id="image_url"
-              value={this.state.image_url}
-              onChange={(e) => this.setState({ image_url: e.target.value })}
-              data-cy="tag-input-image"
-            />
-          </div>
-        </form>
-      </div>
+      <TagEditPageScreen
+        {...this.state}
+        history={this.props.history}
+        sendPost={this.sendPost}
+        setValue={this.setValue}
+      />
     );
   }
 }
 
-export default withTranslation("common")(PostEditPage);
+export default withTranslation("common")(TagEditPage);
