@@ -2,7 +2,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 import githubService from "../../services/github.service";
-import PageTop from "../../components/page-top.component";
+import HomePageScreen from "./home-page.jsx";
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -39,22 +39,7 @@ class HomePage extends React.Component {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-
-    return (
-      <div className="container">
-        <PageTop title="Bem vindo" desc=""></PageTop>
-
-        {this.state.login ? (
-          <p>
-            Você está conectado como: <b>{this.state.login}</b>
-          </p>
-        ) : (
-          <p className={!this.state.showElements ? "d-none" : ""}>
-            Faça login com sua conta do GitHub no canto superior direito.
-          </p>
-        )}
-      </div>
-    );
+    return <HomePageScreen {...this.state}></HomePageScreen>;
   }
 }
 

@@ -1,12 +1,9 @@
 import React from "react";
 import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { withTranslation } from "react-i18next";
-import LazyLoad from "react-lazyload";
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
 import githubService from "../../services/github.service";
+import RepositoryPageScreen from "./repository-list-page.jsx";
 
 class RepositoryPage extends React.Component {
   constructor(props) {
@@ -17,6 +14,11 @@ class RepositoryPage extends React.Component {
       loader: true,
       searchTerm: "",
     };
+    this.search = this.search.bind(this);
+  }
+
+  search(searchTerm = "") {
+    this.setState({ searchTerm: searchTerm, loader: true });
   }
 
   componentDidMount() {
@@ -57,66 +59,11 @@ class RepositoryPage extends React.Component {
     }
   }
 
-  loader() {
-    if (this.state.loader) {
-      return <Loader></Loader>;
-    } else {
-      return this.state.repos.length <= 0 ? (
-        <p data-cy="no-found-records">Nenhum registro encontrado</p>
-      ) : null;
-    }
-  }
-
   render() {
     if (this.state.redirectTo) {
       return <Redirect to={this.state.redirectTo} />;
     }
-
-    return (
-      <div className="container">
-        <PageTop title={"Repositórios"} desc={"Lista dos repositórios"} />
-
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control border-right-0"
-            placeholder="Procurar repositórios..."
-            onChange={(event) =>
-              this.setState({ searchTerm: event.target.value })
-            }
-          />
-          <span className="input-group-append bg-white border-left-0 border-right-4">
-            <span className="input-group-text bg-transparent">
-              <i className="fa fa-search"></i>
-            </span>
-          </span>
-        </div>
-
-        {this.loader()}
-
-        {this.state.repos.map((repo) => (
-          <LazyLoad height={200} debounce={100} key={repo.id}>
-            <Link to={"/repository-detail/" + repo.name} data-cy="list-item">
-              <div className="card">
-                <div className="card-body">
-                  <h4>{repo.name}</h4>
-                  <p className="mt-1">{repo.description}</p>
-                  <p>
-                    {repo.tags_desc
-                      ? repo.tags_desc.split(",").map((r) => (
-                          <span className="badge badge-primary" key={r}>
-                            {r}
-                          </span>
-                        ))
-                      : null}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          </LazyLoad>
-        ))}
-      </div>
-    );
+    return <RepositoryPageScreen {...this.state} search={this.search} />;
   }
 }
 
