@@ -22,8 +22,7 @@ cp .env.sample .env
 
 ## Create a OAuth App 
 
-Go to `Settings > Developer settings > Oauth Apps > New oauth app` 
-and create a app with these configs:
+Go to `Settings > Developer settings > OAuth Apps > New OAuth App` and create an app with these configs:
 
 Application name: `PERN GitHub App`
 Homepage URL: `http://localhost:3000/`
