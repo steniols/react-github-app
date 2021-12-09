@@ -20,8 +20,16 @@ First we need to create a `.env` file and update some things:
 cp .env.sample .env
 ```
 
-Update this variables below with your GitHub credentials:
+## Create a OAuth App 
 
+Go to `Settings > Developer settings > Oauth Apps > New oauth app` 
+and create a app with these configs:
+
+Application name: `PERN GitHub App`
+Homepage URL: `http://localhost:3000/`
+Authorization callback URL: `http://localhost:8003/github/github-auth-callback`
+
+On `.env` file update this variables using your new GitHub OAuth App credentials:
 ```bash
 CLIENT_ID=<GITHUB-CLIENT-ID>
 CLIENT_SECRET=<GITHUB-SECRET-KEY>
