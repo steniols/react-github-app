@@ -108,7 +108,3 @@ This test uses the command below, which will:
 ```bash
 npm run cypress-test
 ```
-
-## Live version
-
-https://steniols-pern-github-app.herokuapp.com/
