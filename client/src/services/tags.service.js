@@ -1,35 +1,24 @@
-import axios from "axios";
-import env from "react-dotenv";
-
-const apiUrl = env &&  env.API_URL ? `${env.API_URL}/tags` : "/tags";
+import api from "./api";
 
 const tagsService = {
   async list() {
-    const url = apiUrl;
-    const data = {
-      token: localStorage.getItem("tokenGithub"),
-    };
-    return axios.post(url, data);
+    return api.get("/tags");
   },
 
   async getOne(tagId) {
-    const url = `${apiUrl}/${tagId}`;
-    return axios.get(url);
+    return api.get(`/tags/${tagId}`);
   },
 
   async create(data) {
-    const url = `${apiUrl}/save`;
-    return axios.post(url, data);
+    return api.post("/tags/save", data);
   },
 
   async edit(data, tagId) {
-    const url = `${apiUrl}/save/${tagId}`;
-    return axios.put(url, data);
+    return api.put(`/tags/save/${tagId}`, data);
   },
 
   async delete(tagId) {
-    const url = `${apiUrl}/${tagId}`;
-    return axios.delete(url);
+    return api.delete(`/tags/${tagId}`);
   },
 };
 

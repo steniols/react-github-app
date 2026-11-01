@@ -4,7 +4,7 @@
 @import url(https://fonts.googleapis.com/css?family=Comfortaa:200,300,400,700);
 $headings-font-family:Comfortaa;
 
-$enable-grid-classes:false;
+$enable-grid-classes:true;
 $primary:#07689F;
 $secondary:#C9D6DF;
 $success:#11D3BC;
@@ -22,7 +22,7 @@ $p: #666;
 $border: #bfbfbf;
 
 
-@import '~bootstrap/scss/bootstrap.scss';
+@import 'bootstrap/scss/bootstrap';
 
 
 /* Global */

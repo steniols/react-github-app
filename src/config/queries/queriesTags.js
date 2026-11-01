@@ -1,34 +1,32 @@
 const knex = require("./knex");
 
 module.exports = {
-  async getAll(user_id, search = false) {
-    let query = knex("tags").where("user_id", user_id);
-    if (search) {
-      query.where(function () {
-        this.where("tags.title", search.trim());
-      });
-    }
-    return query;
+  async getAll(user_id) {
+    return knex("tags").where("user_id", user_id).orderBy("title");
   },
 
-  async getOne(id) {
-    return knex("tags").where("id", id).first();
+  async getOne(id, user_id) {
+    return knex("tags").where({ id, user_id }).first();
+  },
+
+  async getIds(ids, user_id) {
+    return knex("tags").whereIn("id", ids).where("user_id", user_id).pluck("id");
   },
 
   async create(data) {
     return knex("tags").insert(data, "*");
   },
 
-  async update(id, data) {
-    return knex("tags").where("id", id).update(data, "*");
+  async update(id, user_id, data) {
+    return knex("tags").where({ id, user_id }).update(data, "*");
   },
 
-  async delete(id) {
-    this.deleteTagRelations(id);
-    return knex("tags").where("id", id).del();
-  },
-
-  async deleteTagRelations(id) {
-    return knex("rel_tags_repository").where("tag_id", id).del();
+  async delete(id, user_id) {
+    return knex.transaction(async (trx) => {
+      const tag = await trx("tags").where({ id, user_id }).first();
+      if (!tag) return 0;
+      await trx("rel_tags_repository").where("tag_id", id).del();
+      return trx("tags").where("id", id).del();
+    });
   },
 };

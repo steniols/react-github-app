@@ -1,80 +1,73 @@
-import React from 'react';
-import { Link } from "react-router-dom";
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
-import SelectTag from "../../components/select-tag.component";
+import React from "react";
+import { Redirect } from "react-router";
+import { toast } from "react-toastify";
+import { withTranslation } from "react-i18next";
+import githubService from "../../services/github.service";
+import tagsService from "../../services/tags.service";
+import toastErrors from "../../utils/toast-errors";
+import RepositoryDetailPageScreen from "./repository-detail-page.screen.jsx";
 
-class RepositoryDetailPageScreen extends React.Component {
+class RepositoryDetailPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      repository: null,
+      redirectTo: null,
+      tags: null,
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  async componentDidMount() {
+    if (!(await githubService.getUser())) {
+      this.setState({ redirectTo: "/" });
+      return;
+    }
+    this.loadRepository(this.props.match.params.id);
+    this.loadTagsSelect();
+  }
+
+  async loadRepository(repositoryId) {
+    try {
+      let res = await githubService.getRepo(repositoryId);
+      this.setState({ repository: res.data.data });
+    } catch (error) {
+      toastErrors(error, this.props.t);
+    }
+  }
+
+  async loadTagsSelect() {
+    try {
+      let res = await tagsService.list();
+      const options = res.data.data.map((tag) => ({ key: tag.id, label: tag.title }));
+      this.setState({ tags: options });
+    } catch (error) {
+      toast.error("Não foi possível carregar o select de tags.");
+    }
+  }
+
+  async handleSubmit(event, repository_id) {
+    try {
+      const tags = event.map((e) => e.value);
+      const res = await githubService.relTags(repository_id, tags);
+      toast.success(this.props.t(res.message));
+    } catch (error) {
+      toastErrors(error, this.props.t, "Ocorreu um erro ao atualizar as tags deste repositório");
+    }
+  }
+
   render() {
-    return <>
-      <div className="container" data-cy="repository-detail">
-        <PageTop title={"Repositório"} desc={"Detalhes do repositório"}>
-          <button
-            className="btn btn-light"
-            onClick={() => this.props.history.goBack()}
-          >
-            Voltar
-          </button>
-        </PageTop>
-
-        {!this.props.repository ? (
-          <Loader />
-        ) : (
-          <div className="row info">
-            <div className="col-6 bg-light rounded-left">
-              <div className="repository-info mt-4 ml-2">
-                <h4>Título</h4>
-                <p>{this.props.repository?.name}</p>
-              </div>
-              <div className="repository-info mt-4 ml-2">
-                <h4>Descrição</h4>
-                <p>{this.props.repository?.description}</p>
-              </div>
-
-              {this.props.tags ? (
-                <form className="mt-4 ml-2">
-                  <div className="form-group">
-                    <label htmlFor="">
-                      <h4>Relacionar Tags</h4>
-                    </label>
-                    {this.props.repository ? (
-                      <SelectTag
-                        repository_id={this.props.repository.repository_id}
-                        tags={this.props.tags}
-                        tagsSelected={
-                          this.props.repository.tags_ids
-                            ? this.props.repository.tags_ids.split(",")
-                            : []
-                        }
-                        onChangeValue={this.props.handleSubmit}
-                      ></SelectTag>
-                    ) : null}
-                  </div>
-                </form>
-              ) : null}
-            </div>
-            <div className="col-6 bg-light rounded-right">
-              <div className="repository-info mt-4">
-                <h4>Url</h4>
-                <p>
-                  <Link
-                    to={{ pathname: this.props.repository?.html_url }}
-                    target="_blank"
-                  >
-                    {this.props.repository?.html_url}
-                  </Link>
-                </p>
-              </div>
-              <div className="repository-info mt-4">
-                <h4>Clone URL</h4>
-                <p>git clone {this.props.repository?.clone_url}</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
+    if (this.state.redirectTo) {
+      return <Redirect to={this.state.redirectTo} />;
+    }
+    return (
+      <RepositoryDetailPageScreen
+        {...this.state}
+        history={this.props.history}
+        handleSubmit={this.handleSubmit}
+      ></RepositoryDetailPageScreen>
+    );
   }
 }
 
-export default RepositoryDetailPageScreen;
+export default withTranslation("common")(RepositoryDetailPage);
