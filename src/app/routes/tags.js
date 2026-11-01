@@ -1,127 +1,99 @@
 const router = require("express").Router();
 const queries = require("../../config/queries/queriesTags");
+const auth = require("../middlewares/auth");
 
-const axios = require("axios");
-require("dotenv").config();
-
-async function getUser(token) {
-  const response = await axios.get("https://api.github.com/user", {
-    headers: { authorization: `token ${token}` },
-  });
-  return await response.data;
+function serverError(res, error) {
+  console.log(error.message);
+  res.status(500).json({ message: ["Server Error"] });
 }
 
-router.post("/", async (req, res) => {
-  let errors = [];
-  if (!req.body.token) {
-    errors.push("Token is required");
+function parseId(req, res) {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) {
+    res.status(400).json({ message: ["Tag ID is required"] });
+    return null;
   }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
+  return id;
+}
+
+function tagFromBody(body) {
+  return {
+    title: body.title.trim(),
+    content: body.content || "",
+    image_url: body.image_url || "",
+  };
+}
+
+router.use(auth);
+
+router.get("/", async (req, res) => {
   try {
-    const user = await getUser(req.body.token);
-    const tags = await queries.getAll(user.id);
-    res.json({ data: tags });
+    res.json({ data: await queries.getAll(req.user.id) });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
 router.get("/:id", async (req, res) => {
-  let errors = [];
-  if (!req.params.id) {
-    errors.push("Tag ID is required");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
+  const id = parseId(req, res);
+  if (id === null) return;
   try {
-    const tag = await queries.getOne(req.params.id);
+    const tag = await queries.getOne(id, req.user.id);
+    if (!tag) {
+      return res.status(404).json({ message: ["Tag not found"] });
+    }
     res.json({ data: tag });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
 router.post("/save", async (req, res) => {
-  let errors = [];
-  if (!req.body.title) {
-    errors.push("Title is required");
-  }
-
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
+  if (!req.body.title?.trim()) {
+    return res.status(400).json({ message: ["Title is required"] });
   }
   try {
-    const user = await getUser(req.body.token);
-    const tag = {
-      title: req.body.title,
-      content: req.body.content ? req.body.content : "",
-      image_url: req.body.image_url ? req.body.image_url : "",
-      user_id: user.id,
-    };
-    const created = await queries.create(tag);
+    const created = await queries.create({ ...tagFromBody(req.body), user_id: req.user.id });
     res.json({
       message: "Tag saved with success",
       data: created[0],
       id: created[0].id,
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
-router.put("/save/:id", async (req, res, next) => {
-  let errors = [];
-  if (!req.params.id) {
-    errors.push("Tag ID is required");
-  }
-  if (!req.body.title) {
-    errors.push("Title is required");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
+router.put("/save/:id", async (req, res) => {
+  const id = parseId(req, res);
+  if (id === null) return;
+  if (!req.body.title?.trim()) {
+    return res.status(400).json({ message: ["Title is required"] });
   }
   try {
-    const tag = {
-      title: req.body.title,
-      content: req.body.content,
-      image_url: req.body.image_url,
-    };
-    const updated = await queries.update(req.params.id, tag);
+    const updated = await queries.update(id, req.user.id, tagFromBody(req.body));
+    if (!updated.length) {
+      return res.status(404).json({ message: ["Tag not found"] });
+    }
     res.json({
       message: "Tag updated with success",
       data: updated[0],
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
 router.delete("/:id", async (req, res) => {
-  let errors = [];
-  if (!req.params.id) {
-    errors.push("Tag ID is required");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
+  const id = parseId(req, res);
+  if (id === null) return;
   try {
-    await queries.delete(req.params.id);
+    if (!(await queries.delete(id, req.user.id))) {
+      return res.status(404).json({ message: ["Tag not found"] });
+    }
     res.json({ message: "Tag deleted with success" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 

@@ -1,73 +1,62 @@
-import React from 'react';
-import PageTop from "../../components/page-top.component";
-import Loader from "../../components/loader.component";
+import React from "react";
+import { Redirect } from "react-router";
+import { toast } from "react-toastify";
+import { withTranslation } from "react-i18next";
+import githubService from "../../services/github.service";
+import tagsService from "../../services/tags.service";
+import toastErrors from "../../utils/toast-errors";
+import TagDetailPageScreen from "./tag-detail-page.screen.jsx";
 
-class TagDetailPageScreen extends React.Component {
+class TagDetailPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tag: null,
+      redirectTo: null,
+    };
+    this.deleteTag = this.deleteTag.bind(this);
+  }
+
+  async componentDidMount() {
+    if (!(await githubService.getUser())) {
+      this.setState({ redirectTo: "/" });
+      return;
+    }
+    this.loadTag(this.props.match.params.id);
+  }
+
+  async loadTag(tagId) {
+    try {
+      let res = await tagsService.getOne(tagId);
+      this.setState({ tag: res.data.data });
+    } catch (error) {
+      toastErrors(error, this.props.t, "Não foi possível carregar a tag.");
+    }
+  }
+
+  async deleteTag(tagId) {
+    if (!window.confirm("Deseja realmente excluir esta tag?")) return;
+    try {
+      const response = await tagsService.delete(tagId);
+      toast.success(this.props.t(response.data.message));
+      this.props.history.replace("/tag-list");
+    } catch (error) {
+      toastErrors(error, this.props.t);
+    }
+  }
+
   render() {
-    return <>
-      <div className="container">
-        <PageTop title={"Tag"} desc={"Detalhes da tag"}>
-          <button
-            className="btn btn-light"
-            onClick={() => this.props.history.goBack()}
-          >
-            Voltar
-          </button>
-        </PageTop>
-
-        {!this.props.tag ? <Loader /> : null}
-
-        <div className="row  bg-light">
-          <div className="col-6">
-            <img
-              alt="Tag"
-              className="img mt-3 mb-3"
-              src={this.props.tag?.image_url}
-              onError={(e) => {
-                e.target.src = "/img/image-default.png";
-              }}
-            />
-          </div>
-          <div className="col-6">
-            <div className="info mt-4">
-              <h4>ID</h4>
-              <p>{this.props.tag?.id}</p>
-            </div>
-            <div className="info">
-              <h4>Título</h4>
-              <p>{this.props.tag?.title}</p>
-            </div>
-            <div className="info">
-              <h4>Conteúdo</h4>
-              <p>{this.props.tag?.content}</p>
-            </div>
-            <div
-              className="btn-group mb-3"
-              role="group"
-              aria-label="Basic example"
-            >
-              <button
-                type="button"
-                className="btn btn-sm btn-danger"
-                onClick={() => this.props.deleteTag(this.props.tag.id)}
-              >
-                Excluir
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm btn-primary"
-                onClick={() =>
-                  this.props.history.push("/tag-edit/" + this.props.tag.id)
-                }
-              >
-                Editar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    if (this.state.redirectTo) {
+      return <Redirect to={this.state.redirectTo} />;
+    }
+    return (
+      <TagDetailPageScreen
+        {...this.state}
+        history={this.props.history}
+        deleteTag={this.deleteTag}
+      />
+    );
   }
 }
 
-export default TagDetailPageScreen;
+export default withTranslation("common")(TagDetailPage);

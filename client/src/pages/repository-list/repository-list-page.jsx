@@ -1,58 +1,62 @@
-import React from 'react';
-import { Link } from "react-router-dom";
-import Loader from "../../components/loader.component";
-import LazyLoad from "react-lazyload";
-import PageTop from "../../components/page-top.component";
+import React from "react";
+import { Redirect } from "react-router";
+import { withTranslation } from "react-i18next";
+import githubService from "../../services/github.service";
+import toastErrors from "../../utils/toast-errors";
+import RepositoryPageScreen from "./repository-list-page.screen.jsx";
 
-class RepositoryPageScreen extends React.Component {
+const SEARCH_DELAY = 400;
+
+class RepositoryPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      redirectTo: null,
+      repos: [],
+      loader: true,
+      searchTerm: "",
+    };
+    this.search = this.search.bind(this);
+  }
+
+  async componentDidMount() {
+    if (!(await githubService.getUser())) {
+      this.setState({ redirectTo: "/" });
+      return;
+    }
+    this.loadRepos();
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.searchTimeout);
+  }
+
+  // Debounced, so typing does not fire a request (and a GitHub sync) per keystroke
+  search(searchTerm = "") {
+    this.setState({ searchTerm, loader: true });
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => this.loadRepos(searchTerm), SEARCH_DELAY);
+  }
+
+  async loadRepos(search = "") {
+    try {
+      const repos = await githubService.getRepos(search);
+      // Ignore responses for an outdated search term
+      if (search === this.state.searchTerm) {
+        this.setState({ repos, loader: false });
+      }
+    } catch (error) {
+      this.setState({ repos: [], loader: false });
+      toastErrors(error, this.props.t, error.message);
+    }
+  }
+
   render() {
-    return <>
-      <div className="container">
-        <PageTop title={"Repositórios"} desc={"Lista dos repositórios"} />
-
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control border-right-0"
-            placeholder="Procurar repositórios..."
-            onChange={(event) => this.props.search(event.target.value)}
-          />
-          <span className="input-group-append bg-white border-left-0 border-right-4">
-            <span className="input-group-text bg-transparent">
-              <i className="fa fa-search"></i>
-            </span>
-          </span>
-        </div>
-
-        {(this.props.loader) ? <Loader /> : ''}
-  
-        {this.props.repos.map((repo) => (
-          <LazyLoad height={200} debounce={100} key={repo.id}>
-            <Link to={"/repository-detail/" + repo.name} data-cy="list-item">
-              <div className="card">
-                <div className="card-body">
-                  <h4>{repo.name}</h4>
-                  <p className="mt-1">{repo.description}</p>
-                  <p>
-                    {repo.tags_desc
-                      ? repo.tags_desc.split(",").map((r) => (
-                        <span className="badge badge-primary" key={r}>
-                          {r}
-                        </span>
-                      ))
-                      : null}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          </LazyLoad>
-        ))}
-
-        {(!this.props.loader && this.props.repos.length <= 0) ?
-          <p data-cy="no-found-records">Nenhum registro encontrado</p> : ''}
-      </div>
-    </>
+    if (this.state.redirectTo) {
+      return <Redirect to={this.state.redirectTo} />;
+    }
+    return <RepositoryPageScreen {...this.state} search={this.search} />;
   }
 }
 
-export default RepositoryPageScreen;
+export default withTranslation("common")(RepositoryPage);

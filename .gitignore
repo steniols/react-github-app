@@ -42,4 +42,10 @@ yarn-error.log*
 .npm/
 dist
 
-cypress.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/e2e/.auth/
+# local embedded PostgreSQL data
+.pgdata/

@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import MultiSelect from "react-multi-select-component";
+import { MultiSelect } from "react-multi-select-component";
 
 const SelectTag = (props) => {
   const options = [];
   props.tags.map((tag) => options.push({ label: tag.label, value: tag.key }));
 
   const defaultSelectedOptions = props.tagsSelected.map((stag) => {
-    return options.filter((tag) => tag.value.toString() === stag.toString())[0];
+    return options.find((tag) => tag.value.toString() === stag.toString());
   });
-  const [selected, setSelected] = useState(defaultSelectedOptions);
+  const [selected, setSelected] = useState(defaultSelectedOptions.filter(Boolean));
 
   const overrideStrings = {
     allItemsAreSelected: "Todas as tags estão relacionadas",

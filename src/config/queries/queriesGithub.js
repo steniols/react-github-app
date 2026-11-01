@@ -1,5 +1,21 @@
 const knex = require("./knex");
 
+function repositoriesWithTags() {
+  return knex("repositories")
+    .select(
+      "repositories.*",
+      knex.raw("string_agg(tags.title, ',' ORDER BY tags.title) as tags_desc"),
+      knex.raw("string_agg(tags.id::text, ',') as tags_ids")
+    )
+    .leftJoin(
+      "rel_tags_repository",
+      "repositories.repository_id",
+      "rel_tags_repository.repository_id"
+    )
+    .leftJoin("tags", "rel_tags_repository.tag_id", "tags.id")
+    .groupBy("repositories.id");
+}
+
 module.exports = {
   async getToken(token) {
     return knex("auth").where("token", token).first();
@@ -14,33 +30,29 @@ module.exports = {
   },
 
   async deleteToken(data) {
-    return knex("auth")
-      .where("token", data.token)
-      .where("username", data.username)
-      .del();
+    return knex("auth").where("token", data.token).del();
   },
+
   async getAllRepositories(user_id, search = false) {
-    let query = knex("repositories")
-      .select(
-        "repositories.*",
-        knex.raw("string_agg(tags.title, ',') as tags_desc"),
-        knex.raw("string_agg(DISTINCT tags.id::text, ',') as tags_ids")
-      )
-      .leftJoin(
-        "rel_tags_repository",
-        "repositories.repository_id",
-        "rel_tags_repository.repository_id"
-      )
-      .leftJoin("tags", "rel_tags_repository.tag_id", "tags.id")
+    const query = repositoriesWithTags()
       .where("repositories.user_id", user_id)
-      .groupBy("repositories.id");
+      .orderBy("repositories.name");
 
     if (search) {
-      query.where(function () {
-        this.where("repositories.name", "like", `%${search}%`)
-          .orWhere("repositories.description", "like", `%${search}%`)
-          .orWhere("tags.title", "like", `%${search}%`)
-          .orWhere("tags.content", "like", `%${search}%`);
+      const term = `%${search.trim()}%`;
+      // Search in a subquery so the matched repositories still show all their tags
+      query.whereIn("repositories.repository_id", function () {
+        this.select("r.repository_id")
+          .from("repositories as r")
+          .leftJoin("rel_tags_repository as rt", "r.repository_id", "rt.repository_id")
+          .leftJoin("tags as t", "rt.tag_id", "t.id")
+          .where("r.user_id", user_id)
+          .where(function () {
+            this.where("r.name", "ilike", term)
+              .orWhere("r.description", "ilike", term)
+              .orWhere("t.title", "ilike", term)
+              .orWhere("t.content", "ilike", term);
+          });
       });
     }
 
@@ -48,42 +60,27 @@ module.exports = {
   },
 
   async saveRepository(data) {
-    const repository = await knex("repositories")
-      .where("repository_id", data.repository_id)
-      .first();
-    if (repository) {
-      return knex("repositories")
-        .where("repository_id", data.repository_id)
-        .update(data);
-    }
-    return knex("repositories").insert(data);
-  },
-
-  async getOneReposity(id) {
     return knex("repositories")
-      .select(
-        "repositories.*",
-        knex.raw("string_agg(tags.title, ',') as tags_desc"),
-        knex.raw("string_agg(DISTINCT tags.id::text, ',') as tags_ids")
-      )
-      .leftJoin(
-        "rel_tags_repository",
-        "repositories.repository_id",
-        "rel_tags_repository.repository_id"
-      )
-      .leftJoin("tags", "rel_tags_repository.tag_id", "tags.id")
-      .where("repositories.repository_id", id)
-      .groupBy("repositories.id")
+      .insert(data)
+      .onConflict("repository_id")
+      .merge();
+  },
+
+  async getOneRepository(repository_id, user_id) {
+    return repositoriesWithTags()
+      .where("repositories.repository_id", repository_id)
+      .where("repositories.user_id", user_id)
       .first();
   },
 
-  async removeTagsRepositoryRelationship(repository_id) {
-    return knex("rel_tags_repository")
-      .where("repository_id", repository_id)
-      .del();
-  },
-
-  async saveTagsRepositoryRelationship(data) {
-    return knex("rel_tags_repository").insert(data);
+  async setRepositoryTags(repository_id, tag_ids) {
+    return knex.transaction(async (trx) => {
+      await trx("rel_tags_repository").where("repository_id", repository_id).del();
+      if (tag_ids.length) {
+        await trx("rel_tags_repository").insert(
+          tag_ids.map((tag_id) => ({ repository_id, tag_id }))
+        );
+      }
+    });
   },
 };

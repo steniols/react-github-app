@@ -3,7 +3,12 @@
   "Tag saved with success": "A Tag foi salva com sucesso",
   "Tag updated with success": "A tag foi atualizada com sucesso",
   "Tag deleted with success": "A tag foi excluída com sucesso",
+  "Tag not found": "Tag não encontrada",
   "Token is required": "O token é obrigatório",
+  "Invalid token": "Sua sessão expirou, faça login novamente",
   "Server Error": "Ocorreu um erro no servidor, tente novamente mais tarde",
-  "Tag ID is required": "É necessário informar uma tag"
+  "Tag ID is required": "É necessário informar uma tag",
+  "Repository ID is required": "É necessário informar um repositório",
+  "Repository not found": "Repositório não encontrado",
+  "Repository tags updated with success": "As tags do repositório foram atualizadas com sucesso!"
 }

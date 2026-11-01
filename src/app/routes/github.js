@@ -1,16 +1,21 @@
 const router = require("express").Router();
-const queries = require("../../config/queries/queriesGithub");
 const axios = require("axios");
-require("dotenv").config();
+const queries = require("../../config/queries/queriesGithub");
+const tagQueries = require("../../config/queries/queriesTags");
+const github = require("../services/github");
+const auth = require("../middlewares/auth");
 
-async function getUser(token) {
-  const response = await axios.get("https://api.github.com/user", {
-    headers: { authorization: `token ${token}` },
-  });
-  return await response.data;
+function serverError(res, error) {
+  console.log(error.message);
+  res.status(500).json({ message: ["Server Error"] });
 }
 
 router.get("/", (req, res) => {
+  if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
+    return res
+      .status(500)
+      .send("CLIENT_ID / CLIENT_SECRET are not set in .env (restart the API after editing it).");
+  }
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${process.env.CLIENT_ID}&scope=repo`
   );
@@ -18,112 +23,49 @@ router.get("/", (req, res) => {
 
 router.get("/github-auth-callback", async (req, res) => {
   try {
-    const code = req.query.code;
     const body = {
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
-      code: code,
+      code: req.query.code,
     };
     const opts = { headers: { accept: "application/json" } };
     const response = await axios.post(
-      `https://github.com/login/oauth/access_token`,
+      "https://github.com/login/oauth/access_token",
       body,
       opts
     );
-    const token = await response.data.access_token;
-    const user = await getUser(token);
-    const data = {
-      token: token,
-      username: user.login,
-    };
-    await queries.saveToken(data);
-    res.redirect(
-      `${
-        process.env.NODE_ENV == "production" ? "/" : process.env.APP_URL
-      }?username=${user.login}&token=${token}`
-    );
+    if (response.data.error) {
+      throw new Error(response.data.error_description || response.data.error);
+    }
+    const token = response.data.access_token;
+    const user = await github.getUser(token);
+    await queries.saveToken({ token, username: user.login });
+    const appUrl = process.env.NODE_ENV == "production" ? "/" : process.env.APP_URL;
+    res.redirect(`${appUrl}?username=${user.login}&token=${token}`);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
-router.post("/github-logout-user", async (req, res) => {
-  let errors = [];
-  if (!req.body.token) {
-    errors.push("Token is required");
-  }
-  if (!req.body.username) {
-    errors.push("Username não informado");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
+router.post("/github-logout-user", auth, async (req, res) => {
   try {
-    const token = req.body.token;
-    const username = req.body.username;
-    const data = {
-      token: token,
-      username: username,
-    };
-    await queries.deleteToken(data);
-
-    deleteToken;
+    await queries.deleteToken({ token: req.token });
+    res.json({ message: "Logged out" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
-router.get("/github-get-userdata/:token", async (req, res) => {
-  let errors = [];
-  if (!req.params.token) {
-    errors.push("Token is required");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
-  try {
-    const token = await queries.getToken(req.params.token);
-    const response = await axios.get("https://api.github.com/user", {
-      headers: { authorization: `token ${token.token}` },
-    });
-    res.json({ data: response.data });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
-  }
+router.get("/github-get-userdata", auth, (req, res) => {
+  res.json({ data: req.user });
 });
 
-router.post("/github-repositories", async (req, res) => {
-  let errors = [];
-  if (!req.body.token) {
-    errors.push("Token is required");
-  }
-  if (!req.body.user) {
-    errors.push("User is required");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
+router.post("/github-repositories", auth, async (req, res) => {
   try {
-    const token = req.body.token;
-    const username = req.body.user;
-    const search = req.body.search;
-    const query = `q=user:${username}`;
-    const response = await axios.get(
-      `https://api.github.com/search/repositories?${query}`,
-      {
-        headers: { authorization: `token ${token}` },
-      }
-    );
-    const repositoriesResponse = response.data.items;
+    const repositories = await github.getRepositories(req.token);
     await Promise.all(
-      repositoriesResponse.map(async (r) => {
-        const data = {
+      repositories.map((r) =>
+        queries.saveRepository({
           repository_id: r.id,
           name: r.name,
           full_name: r.full_name,
@@ -131,79 +73,50 @@ router.post("/github-repositories", async (req, res) => {
           clone_url: r.clone_url,
           html_url: r.html_url,
           user_id: r.owner.id,
-        };
-        await queries.saveRepository(data);
-      })
+        })
+      )
     );
-    const user = await getUser(token);
-    const repositories = await queries.getAllRepositories(user.id, search);
-    res.json({ repositories });
+    res.json({
+      repositories: await queries.getAllRepositories(req.user.id, req.body.search),
+    });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
-router.post("/github-repository/:id", async (req, res) => {
-  let errors = [];
-  if (!req.body.token) {
-    errors.push("Token is required");
-  }
-  if (!req.body.user) {
-    errors.push("User is required");
-  }
-  if (!req.params.id) {
-    errors.push("Repository ID is required");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
-  }
+router.get("/github-repository/:name", auth, async (req, res) => {
   try {
-    const token = req.body.token;
-    const user = req.body.user;
-    const response = await axios.get(
-      "https://api.github.com/repos/" + user + "/" + req.params.id,
-      { headers: { authorization: `token ${token}` } }
-    );
-    const { id } = await response.data;
-    const repository = await queries.getOneReposity(id);
+    const { id } = await github.getRepository(req.token, req.user.login, req.params.name);
+    const repository = await queries.getOneRepository(id, req.user.id);
+    if (!repository) {
+      return res.status(404).json({ message: ["Repository not found"] });
+    }
     res.json({ data: repository });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ message: ["Server Error"] });
+    if (error.response?.status === 404) {
+      return res.status(404).json({ message: ["Repository not found"] });
+    }
+    serverError(res, error);
   }
 });
 
-router.post("/rel-tags/", async (req, res) => {
-  let errors = [];
-  if (!req.body.repoId) {
-    errors.push("Id do repositório não informado");
-  }
-  if (errors.length) {
-    res.status(400).json({ message: errors });
-    return;
+router.post("/rel-tags", auth, async (req, res) => {
+  const repoId = Number(req.body.repoId);
+  if (!Number.isInteger(repoId)) {
+    return res.status(400).json({ message: ["Repository ID is required"] });
   }
   try {
-    const repoId = req.body.repoId;
-    const tags = req.body.tags;
-    let relData = [];
-    if (tags) {
-      tags.map((tag) => {
-        relData.push([repoId, tag]);
-      });
+    const repository = await queries.getOneRepository(repoId, req.user.id);
+    if (!repository) {
+      return res.status(404).json({ message: ["Repository not found"] });
     }
-    await queries.removeTagsRepositoryRelationship(repoId);
-    for (var i = 0; i < relData.length; i++) {
-      const data = {
-        repository_id: relData[i][0],
-        tag_id: relData[i][1],
-      };
-      await queries.saveTagsRepositoryRelationship(data);
-    }
+    // Only keep tags that belong to the logged user
+    const requested = (req.body.tags || []).map(Number).filter(Number.isInteger);
+    const tags = requested.length ? await tagQueries.getIds(requested, req.user.id) : [];
+    await queries.setRepositoryTags(repoId, tags);
+    res.json({ message: "Repository tags updated with success" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: ["Server Error"] });
+    serverError(res, error);
   }
 });
 
