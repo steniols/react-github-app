@@ -5,6 +5,13 @@ Log in with GitHub, list your repositories and organize them with your own tags.
 
 **Stack:** Node 20+, Express 4, Knex 3, PostgreSQL, React 18, Vite, Bootstrap 4.
 
+## Live version
+
+https://steniols-github-app.onrender.com/
+
+Hosted on [Render](https://render.com) (free plan) with the database on [Neon](https://neon.com).
+The free instance sleeps when idle, so the first access may take up to a minute.
+
 ## Requirements
 
 * Node **20.19+** (tested with Node 22).
