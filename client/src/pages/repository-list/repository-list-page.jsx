@@ -14,6 +14,7 @@ class RepositoryPage extends React.Component {
       redirectTo: null,
       repos: [],
       loader: true,
+      loaded: false,
       searchTerm: "",
     };
     this.search = this.search.bind(this);
@@ -43,10 +44,10 @@ class RepositoryPage extends React.Component {
       const repos = await githubService.getRepos(search);
       // Ignore responses for an outdated search term
       if (search === this.state.searchTerm) {
-        this.setState({ repos, loader: false });
+        this.setState({ repos, loader: false, loaded: true });
       }
     } catch (error) {
-      this.setState({ repos: [], loader: false });
+      this.setState({ repos: [], loader: false, loaded: true });
       toastErrors(error, this.props.t, error.message);
     }
   }

@@ -19,12 +19,17 @@ class RepositoryPageScreen extends React.Component {
           />
           <span className="input-group-append bg-white border-left-0 border-right-4">
             <span className="input-group-text bg-transparent">
-              <i className="fa fa-search"></i>
+              {this.props.loader && this.props.loaded ? (
+                <span className="spinner-border spinner-border-sm text-primary" data-cy="search-loading"></span>
+              ) : (
+                <i className="fa fa-search"></i>
+              )}
             </span>
           </span>
         </div>
 
-        {(this.props.loader) ? <Loader /> : ''}
+        {/* Full screen loader only on the first load; searches show the spinner in the input */}
+        {(this.props.loader && !this.props.loaded) ? <Loader /> : ''}
   
         {this.props.repos.map((repo) => (
             <Link to={"/repository-detail/" + repo.name} key={repo.id} data-cy="list-item">
