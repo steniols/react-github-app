@@ -1,14 +1,15 @@
 import React from "react";
 
+// Centered on the screen over a blurred background. The navbar stays usable,
+// so the user can leave a page that is taking long to load.
 const Loader = () => {
   return (
-    <>
-      <div className="d-flex justify-content-center loader-spinner">
-        <div className="spinner-border text-primary" role="status">
-          <span className="sr-only">Carregando...</span>
-        </div>
+    <div className="loader-overlay" role="status" aria-live="polite">
+      <div className="loader-overlay__box">
+        <div className="spinner-border text-primary"></div>
+        <span>Carregando...</span>
       </div>
-    </>
+    </div>
   );
 };
 
